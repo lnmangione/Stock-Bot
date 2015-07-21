@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,12 +13,12 @@ public class Symbol {
 	BigDecimal price, change, dayHigh, dayLow, ftWkHigh, ftWkLow, eps;
 	long volume, shares;
 	
-	public Symbol(String stock){
+	public Symbol(String stock) throws IOException{
 		setInfo(stock);
 	}
 	 
 	//Returns History
-		public List<HistoricalQuote> getHistory(int months){
+		public List<HistoricalQuote> getHistory(int months) throws IOException{
 		Stock t = YahooFinance.get(symbol);
 		Calendar from = Calendar.getInstance();
 		Calendar to = Calendar.getInstance();
@@ -27,7 +28,7 @@ public class Symbol {
 	}
 		
 	//Sets Features
-		private void setInfo(String ticker){
+		private void setInfo(String ticker) throws IOException{
 		Stock stock = YahooFinance.get(ticker);
 		symbol = ticker;
 		price = stock.getQuote().getPrice();
