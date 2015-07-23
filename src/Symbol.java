@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import yahoofinance.Stock;
@@ -55,14 +54,15 @@ public class Symbol {
 	 */
 	public BigDecimal getMA(int daysAgo, int days) throws IOException {
 		// Gets last 200 days of quotes
-		List<HistoricalQuote> quotes = getHistory(daysAgo, days);
+		List<HistoricalQuote> quotes = getHistory(daysAgo, days - 1);
 		
 		// Calculate the moving average
 		BigDecimal ma = new BigDecimal(0);
 		for (HistoricalQuote quote : quotes) {
-			ma.add(quote.getAdjClose());
+			ma = ma.add(quote.getAdjClose());
+			System.out.println(ma);
 		}
-		ma.divide(new BigDecimal(days));
+		ma = ma.divide(new BigDecimal(days));
 		
 		return ma;
 	}
@@ -77,8 +77,8 @@ public class Symbol {
 	 */
 	public BigDecimal getMAPrediction(int daysAgo, int days, int futureDays) throws IOException {
 		// Calculate moving averages
-		BigDecimal day1 = getMA(daysAgo, days);
-		BigDecimal day2 = getMA(daysAgo - 1, days);
+		BigDecimal day1 = getMA(daysAgo, days - 1);
+		BigDecimal day2 = getMA(daysAgo - 1, days - 1);
 		
 		// Calculate slope
 		BigDecimal slope = day1.subtract(day2);
@@ -87,7 +87,7 @@ public class Symbol {
 		BigDecimal closePrice = getHistory(daysAgo, 0).remove(0).getAdjClose();
 		
 		// Return calculated prediction
-		return closePrice.add(slope.multiply(new BigDecimal(3)));
+		return closePrice.add(slope.multiply(new BigDecimal(futureDays)));
 	}
 		
 	//Sets Features
@@ -103,7 +103,7 @@ public class Symbol {
 	 	ftWkLow = stock.getQuote().getYearLow(); 
 	 	eps = stock.getStats().getEps();
 	 	shares = stock.getStats().getSharesOutstanding();
-	 	BigDecimal twoHundredChange = stock.getQuote().getChangeFromAvg200();
+	 	// BigDecimal twoHundredChange = stock.getQuote().getChangeFromAvg200();
 	} 
 	
 	//Returns Features
