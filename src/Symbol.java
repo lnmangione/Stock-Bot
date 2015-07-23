@@ -18,7 +18,7 @@ public class Symbol {
 	}
 	 
 	//Returns History
-		public List<HistoricalQuote> getHistory(int months) throws IOException{
+	public List<HistoricalQuote> getHistory(int months) throws IOException{
 		Stock t = YahooFinance.get(symbol);
 		Calendar from = Calendar.getInstance();
 		Calendar to = Calendar.getInstance();
@@ -28,7 +28,7 @@ public class Symbol {
 	}
 		
 	//Sets Features
-		private void setInfo(String ticker) throws IOException{
+	private void setInfo(String ticker) throws IOException{
 		Stock stock = YahooFinance.get(ticker);
 		symbol = ticker;
 		price = stock.getQuote().getPrice();
@@ -44,31 +44,31 @@ public class Symbol {
 	} 
 	
 	//Returns Features
-		public String getSymbol(){
-			return symbol;
-		}
-		public BigDecimal getDayHigh(){
-			return dayHigh;
-		}
-		public BigDecimal getDayLow(){
-			return dayLow;
-		}
-		public BigDecimal getFtWkHigh(){
-			return ftWkHigh;
-		}
-		public BigDecimal getFtWkLow(){
-			return ftWkLow;
-		}
-		public BigDecimal getPrice(){
-			return price;
-		}
-		public BigDecimal getEPS(){
-			return eps;
-		}
-		public long getNumberOfShares(){
-			return shares;
-		}
-		public long getVolume(){
-			return volume;
-		}
+	public String getSymbol(){
+		return symbol;
+	}
+	public BigDecimal getDayHigh(){
+		return dayHigh;
+	}
+	public BigDecimal getDayLow(){
+		return dayLow;
+	}
+	public BigDecimal getFtWkHigh(){
+		return ftWkHigh;
+	}
+	public BigDecimal getFtWkLow(){
+		return ftWkLow;
+	}
+	public BigDecimal getPrice(){
+		return price;
+	}
+	public BigDecimal getEPS(){
+		return eps;
+	}
+	public long getNumberOfShares(){
+		return shares;
+	}
+	public long getVolume(){
+		return volume;
+	}
 }
