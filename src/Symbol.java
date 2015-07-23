@@ -27,7 +27,14 @@ public class Symbol {
 		return quotes;
 	}
 	
-	// Returns Moving Average
+	/**
+	 *  Returns a moving average from a stock's history
+	 * @author Michael Bick
+	 * @param daysAgo days ago the moving average is from
+	 * @param days days to use in the moving average
+	 * @return moving average
+	 * @throws IOException
+	 */
 	public BigDecimal getMA(int daysAgo, int days) throws IOException {
 		// Adds last 200 days into a list of quotes
 		Stock t = YahooFinance.get(symbol);
@@ -45,6 +52,34 @@ public class Symbol {
 		ma.divide(new BigDecimal(days));
 		
 		return ma;
+	}
+	
+	/**
+	 * Returns a linear prediction of a stock's price using the slope of the moving average
+	 * @author Michael Bick
+	 * @param daysAgo days ago the moving average is predicted from
+	 * @param days days used in calculating the moving averages
+	 * @param int futureDays days into the future to predict to
+	 * @return returns predicted price
+	 */
+	public BigDecimal getMAPrediction(int daysAgo, int days, int futureDays) throws IOException {
+		// Calculate moving averages
+		BigDecimal day1 = getMA(daysAgo, days);
+		BigDecimal day2 = getMA(daysAgo - 1, days);
+		
+		// Calculate slope
+		BigDecimal slope = day1.subtract(day2);
+		
+		// Get day1 closing price
+		Stock t = YahooFinance.get(symbol);
+		Calendar from = Calendar.getInstance();
+		Calendar to = Calendar.getInstance();
+		to.add(Calendar.DAY_OF_MONTH, - daysAgo);
+		from.add(Calendar.DAY_OF_MONTH, - (daysAgo + 1));
+		BigDecimal closePrice = t.getHistory(from, to, Interval.DAILY).remove(0).getAdjClose();
+		
+		// Return calculated prediction
+		return closePrice.add(slope.multiply(new BigDecimal(3)));
 	}
 		
 	//Sets Features
