@@ -28,6 +28,24 @@ public class Symbol {
 	}
 	
 	/**
+	 * Returns list of historical quotes using days
+	 * @author Michael Bick
+	 * @param daysAgo days ago the first quote is from
+	 * @param days amount of days of historical quotes
+	 * @return list of historical quotes from time period
+	 * @throws IOException
+	 */
+	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {
+		Stock t = YahooFinance.get(symbol);
+		Calendar from = Calendar.getInstance();
+		Calendar to = Calendar.getInstance();
+		to.add(Calendar.DAY_OF_MONTH, - daysAgo);
+		from.add(Calendar.DAY_OF_MONTH, - (daysAgo + days));
+		List<HistoricalQuote> quotes = t.getHistory(from, to, Interval.DAILY);
+		return quotes;
+	}
+	
+	/**
 	 *  Returns a moving average from a stock's history
 	 * @author Michael Bick
 	 * @param daysAgo days ago the moving average is from
@@ -36,13 +54,8 @@ public class Symbol {
 	 * @throws IOException
 	 */
 	public BigDecimal getMA(int daysAgo, int days) throws IOException {
-		// Adds last 200 days into a list of quotes
-		Stock t = YahooFinance.get(symbol);
-		Calendar from = Calendar.getInstance();
-		Calendar to = Calendar.getInstance();
-		to.add(Calendar.DAY_OF_MONTH, - daysAgo);
-		from.add(Calendar.DAY_OF_MONTH, - (daysAgo + days));
-		List<HistoricalQuote> quotes = t.getHistory(from, to, Interval.DAILY);
+		// Gets last 200 days of quotes
+		List<HistoricalQuote> quotes = getHistory(daysAgo, days);
 		
 		// Calculate the moving average
 		BigDecimal ma = new BigDecimal(0);
@@ -71,12 +84,7 @@ public class Symbol {
 		BigDecimal slope = day1.subtract(day2);
 		
 		// Get day1 closing price
-		Stock t = YahooFinance.get(symbol);
-		Calendar from = Calendar.getInstance();
-		Calendar to = Calendar.getInstance();
-		to.add(Calendar.DAY_OF_MONTH, - daysAgo);
-		from.add(Calendar.DAY_OF_MONTH, - (daysAgo + 1));
-		BigDecimal closePrice = t.getHistory(from, to, Interval.DAILY).remove(0).getAdjClose();
+		BigDecimal closePrice = getHistory(daysAgo, 0).remove(0).getAdjClose();
 		
 		// Return calculated prediction
 		return closePrice.add(slope.multiply(new BigDecimal(3)));
