@@ -26,6 +26,26 @@ public class Symbol {
 		List<HistoricalQuote> quotes = t.getHistory(from, to, Interval.DAILY);
 		return quotes;
 	}
+	
+	// Returns Moving Average
+	public BigDecimal getMA(int daysAgo, int days) throws IOException {
+		// Adds last 200 days into a list of quotes
+		Stock t = YahooFinance.get(symbol);
+		Calendar from = Calendar.getInstance();
+		Calendar to = Calendar.getInstance();
+		to.add(Calendar.DAY_OF_MONTH, - daysAgo);
+		from.add(Calendar.DAY_OF_MONTH, - (daysAgo + days));
+		List<HistoricalQuote> quotes = t.getHistory(from, to, Interval.DAILY);
+		
+		// Calculate the moving average
+		BigDecimal ma = new BigDecimal(0);
+		for (HistoricalQuote quote : quotes) {
+			ma.add(quote.getAdjClose());
+		}
+		ma.divide(new BigDecimal(days));
+		
+		return ma;
+	}
 		
 	//Sets Features
 	private void setInfo(String ticker) throws IOException{
