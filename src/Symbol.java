@@ -61,13 +61,11 @@ public class Symbol {
 		// Gets historical quotes
 		List<HistoricalQuote> quotes = getHistory(daysAgo, days);
 		
-		System.out.println(quotes.size());
-		
 		// Calculate the moving average
 		BigDecimal ma = new BigDecimal(0);
 		for (HistoricalQuote quote : quotes) {
 			ma = ma.add(quote.getAdjClose());
-			System.out.println(quote.getAdjClose());
+			// System.out.println(quote.getAdjClose());
 			// System.out.println(ma);
 		}
 		ma = ma.divide(new BigDecimal(quotes.size()), 2, RoundingMode.HALF_UP); // Rounds the "regular" way to 2 decimal places
@@ -92,7 +90,7 @@ public class Symbol {
 		BigDecimal slope = day1.subtract(day2);
 		
 		// Get day1 closing price
-		BigDecimal closePrice = getHistory(daysAgo, 0).remove(0).getAdjClose();
+		BigDecimal closePrice = getHistory(daysAgo, 1).remove(0).getAdjClose();
 		
 		// Return calculated prediction
 		return closePrice.add(slope.multiply(new BigDecimal(futureDays)));
