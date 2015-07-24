@@ -7,9 +7,15 @@ public class Bot {
 	public static void main(String[] args) throws IOException {
 		Symbol symbol;
 		Scanner sc = new Scanner(System.in);
+		
+		/*
+		// Get a stock sybol to check
 		System.out.print("Stock: ");
 		String stock = sc.next();
 		symbol = new Symbol(stock);
+		*/
+		
+		symbol = new Symbol("AAPL");
 		
 		System.out.println("Symbol: " + symbol.getSymbol());
 		System.out.println("Price: " + ds + symbol.getPrice());

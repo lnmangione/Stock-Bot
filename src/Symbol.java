@@ -1,7 +1,9 @@
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.List;
+
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
@@ -60,9 +62,10 @@ public class Symbol {
 		BigDecimal ma = new BigDecimal(0);
 		for (HistoricalQuote quote : quotes) {
 			ma = ma.add(quote.getAdjClose());
-			System.out.println(ma);
+			System.out.println(quote.getAdjClose());
+			// System.out.println(ma);
 		}
-		ma = ma.divide(new BigDecimal(days));
+		ma = ma.divide(new BigDecimal(quotes.size()), 2, RoundingMode.HALF_UP); // Rounds the "regular" way to 2 decimal places
 		
 		return ma;
 	}
