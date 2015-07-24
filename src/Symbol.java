@@ -39,10 +39,13 @@ public class Symbol {
 	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {
 		Stock t = YahooFinance.get(symbol);
 		Calendar from = Calendar.getInstance();
-		Calendar to = Calendar.getInstance();
-		to.add(Calendar.DAY_OF_MONTH, - daysAgo);
-		from.add(Calendar.DAY_OF_MONTH, - (daysAgo + days));
-		List<HistoricalQuote> quotes = t.getHistory(from, to, Interval.DAILY);
+		
+		// Grab history of more days than necessary. We'll filter out what we don't need later
+		from.add(Calendar.DAY_OF_MONTH, - (2 * (daysAgo + days)));
+		List<HistoricalQuote> quotes = t.getHistory(from, Interval.DAILY);
+		// Filter the list down to what we need
+		quotes = quotes.subList(daysAgo, daysAgo + days); 
+		
 		return quotes;
 	}
 	
@@ -50,19 +53,21 @@ public class Symbol {
 	 *  Returns a moving average from a stock's history
 	 * @author Michael Bick
 	 * @param daysAgo days ago the moving average is from
-	 * @param days days to use in the moving average
+	 * @param days amount of days to use in the moving average
 	 * @return moving average
 	 * @throws IOException
 	 */
 	public BigDecimal getMA(int daysAgo, int days) throws IOException {
-		// Gets last 200 days of quotes
-		List<HistoricalQuote> quotes = getHistory(daysAgo, days - 1);
+		// Gets historical quotes
+		List<HistoricalQuote> quotes = getHistory(daysAgo, days);
+		
+		System.out.println(quotes.size());
 		
 		// Calculate the moving average
 		BigDecimal ma = new BigDecimal(0);
 		for (HistoricalQuote quote : quotes) {
 			ma = ma.add(quote.getAdjClose());
-			// System.out.println(quote.getAdjClose());
+			System.out.println(quote.getAdjClose());
 			// System.out.println(ma);
 		}
 		ma = ma.divide(new BigDecimal(quotes.size()), 2, RoundingMode.HALF_UP); // Rounds the "regular" way to 2 decimal places

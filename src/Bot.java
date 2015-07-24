@@ -20,8 +20,8 @@ public class Bot {
 		System.out.println("Symbol: " + symbol.getSymbol());
 		System.out.println("Price: " + ds + symbol.getPrice());
 		System.out.println("Shares: " + symbol.getNumberOfShares());
-		System.out.println("50 Day Moving Average: " + symbol.getMA(1, 50));
-		System.out.println("50 Day MA Prediction: " + symbol.getMAPrediction(10,50,10));
+		System.out.println("Moving Average: " + symbol.getMA(0, 50));
+		// System.out.println("MA Prediction: " + symbol.getMAPrediction(10,50,10));
 		
 		sc.close();
 	}
