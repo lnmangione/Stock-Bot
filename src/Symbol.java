@@ -62,7 +62,7 @@ public class Symbol {
 		BigDecimal ma = new BigDecimal(0);
 		for (HistoricalQuote quote : quotes) {
 			ma = ma.add(quote.getAdjClose());
-			System.out.println(quote.getAdjClose());
+			// System.out.println(quote.getAdjClose());
 			// System.out.println(ma);
 		}
 		ma = ma.divide(new BigDecimal(quotes.size()), 2, RoundingMode.HALF_UP); // Rounds the "regular" way to 2 decimal places
