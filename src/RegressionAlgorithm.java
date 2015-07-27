@@ -29,15 +29,7 @@ public class RegressionAlgorithm {
 		//For each symbol si
 		for (Symbol symbol: symbolsArray){
 			//Create array of features x0 to xn, by calculating each value for si
-			double[] featuresArray = new double[numFeatures + 1];
-			//FIX -- manually set values of array: eps, price, volume, ftWkHigh
-			//x0 is always initialized to 1
-			featuresArray[0] = 1.0;
-			featuresArray[1] = symbol.getEPS().doubleValue();
-			featuresArray[2] = symbol.getPrice().doubleValue();
-			featuresArray[3] = (double)symbol.getVolume();
-			featuresArray[4] = symbol.getFtWkHigh().doubleValue();
-			
+			double[] featuresArray = symbol.getFeatures(0);
 	
 			//y (ratio) is stock end value / starting value, thus 1.3 would be 30% increase
 			List<HistoricalQuote> historic = symbol.getHistory(1);
@@ -65,14 +57,9 @@ public class RegressionAlgorithm {
 		return weightsArray;
 	}
 	
-	public static double predict1MonthRatio(Symbol symbol, double[] weightsArray){
+	public static double predict1MonthRatio(Symbol symbol, double[] weightsArray) throws IOException{
 		//FIX -- manually set values of array: eps, price, volume, ftWkHigh
-		double[] featuresArray = new double[5];
-		featuresArray[0] = 1.0;
-		featuresArray[1] = symbol.getEPS().doubleValue();
-		featuresArray[2] = symbol.getPrice().doubleValue();
-		featuresArray[3] = (double)symbol.getVolume();
-		featuresArray[4] = symbol.getFtWkHigh().doubleValue();
+		double[] featuresArray = symbol.getFeatures(0);
 		
 		double predictedRatio = 0.0;
 		for (int i = 0; i < 5; i ++){

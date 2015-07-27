@@ -44,9 +44,33 @@ public class Symbol extends Stock {
 	}
 	
 	/**
+	 * Returns a historical adjusted closing price of a stock
+	 * @author Michael Bick
+	 * @param daysAgo amount of days ago to get the closing price from
+	 * @return historical adjusted closing price
+	 * @throws IOException
+	 */
+	public BigDecimal getAdjClose(int daysAgo) throws IOException {
+		List<HistoricalQuote> quotes = getHistory(daysAgo, 1);
+		return quotes.get(0).getAdjClose();
+	}
+	
+	/**
+	 * Returns a historical volume of shares traded
+	 * @author Michael Bick
+	 * @param daysAgo amount of days ago to get the volume from
+	 * @return volume of shares traded
+	 * @throws IOException
+	 */
+	public long getVolume(int daysAgo) throws IOException {
+		List<HistoricalQuote> quotes = getHistory(daysAgo, 1);
+		return quotes.get(0).getVolume();
+	}
+	
+	/**
 	 *  Returns a moving average from a stock's history
 	 * @author Michael Bick
-	 * @param daysAgo days ago the moving average is from
+	 * @param daysAgo amount of days ago the moving average is from
 	 * @param days amount of days to use in the moving average
 	 * @return moving average
 	 * @throws IOException
@@ -67,6 +91,32 @@ public class Symbol extends Stock {
 		return ma;
 	}
 	
+	/**
+	 * Returns an array containing different features to use in a stock prediction
+	 * @author Michael Bick
+	 * @param daysAgo amount of days ago to get the features from
+	 * @return array containing features
+	 * @throws IOException
+	 */
+	public double[] getFeatures(int daysAgo) throws IOException {
+		int NUM_FEATURES = 3;
+		
+		double[] features = new double[NUM_FEATURES + 1];
+		
+		features[0] = 1.0;
+		features[1] = getMA(daysAgo, 50).doubleValue();
+		features[2] = getAdjClose(daysAgo).doubleValue();
+		features[3] = (double)getVolume(daysAgo);
+		// Need function to get EPS
+		// Need function to get year high
+		
+		return features;
+	}
+	
+	public BigDecimal getPrice() {
+		return getQuote().getPrice();
+	}
+	/*
 	public BigDecimal getDayHigh() {
 		return getQuote().getDayHigh();
 	}
@@ -80,9 +130,6 @@ public class Symbol extends Stock {
 	public BigDecimal getFtWkLow(){
 		return getQuote().getYearLow();
 	}
-	public BigDecimal getPrice() {
-		return getQuote().getPrice();
-	}
 	public BigDecimal getEPS() {
 		return getStats().getEps();
 	}
@@ -92,5 +139,5 @@ public class Symbol extends Stock {
 	public long getVolume() {
 		return getQuote().getVolume();
 	}
-	
+	*/
 }
