@@ -5,26 +5,21 @@ import java.util.Calendar;
 import java.util.List;
 
 import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
-public class Symbol {
-	String symbol;
-	BigDecimal price, change, dayHigh, dayLow, ftWkHigh, ftWkLow, eps;
-	long volume, shares;
+public class Symbol extends Stock {
 	
-	public Symbol(String stock) throws IOException{
-		setInfo(stock);
+	public Symbol(String symbol) {
+		super(symbol);
 	}
 	 
 	//Returns History
 	public List<HistoricalQuote> getHistory(int months) throws IOException{
-		Stock t = YahooFinance.get(symbol);
 		Calendar from = Calendar.getInstance();
 		Calendar to = Calendar.getInstance();
 		from.add(Calendar.MONTH, - months); //4 Months Ago
-		List<HistoricalQuote> quotes = t.getHistory(from, to, Interval.DAILY);
+		List<HistoricalQuote> quotes = getHistory(from, to, Interval.DAILY);
 		return quotes;
 	}
 	
@@ -37,12 +32,11 @@ public class Symbol {
 	 * @throws IOException
 	 */
 	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {
-		Stock t = YahooFinance.get(symbol);
 		Calendar from = Calendar.getInstance();
 		
 		// Grab history of more days than necessary. We'll filter out what we don't need later
 		from.add(Calendar.DAY_OF_MONTH, - (2 * (daysAgo + days)));
-		List<HistoricalQuote> quotes = t.getHistory(from, Interval.DAILY);
+		List<HistoricalQuote> quotes = getHistory(from, Interval.DAILY);
 		// Filter the list down to what we need
 		quotes = quotes.subList(daysAgo, daysAgo + days); 
 		
@@ -72,49 +66,31 @@ public class Symbol {
 		
 		return ma;
 	}
-		
-	//Sets Features
-	private void setInfo(String ticker) throws IOException{
-		Stock stock = YahooFinance.get(ticker);
-		symbol = ticker;
-		price = stock.getQuote().getPrice();
-		change = stock.getQuote().getChangeInPercent();
-		volume =stock.getQuote().getVolume();  
-		dayHigh = stock.getQuote().getDayHigh(); 
-	 	dayLow = stock.getQuote().getDayLow(); 
-	 	ftWkHigh = stock.getQuote().getYearHigh(); 
-	 	ftWkLow = stock.getQuote().getYearLow(); 
-	 	eps = stock.getStats().getEps();
-	 	shares = stock.getStats().getSharesOutstanding();
-	 	// BigDecimal twoHundredChange = stock.getQuote().getChangeFromAvg200();
-	} 
 	
-	//Returns Features
-	public String getSymbol(){
-		return symbol;
+	public BigDecimal getDayHigh() {
+		return getQuote().getDayHigh();
 	}
-	public BigDecimal getDayHigh(){
-		return dayHigh;
-	}
-	public BigDecimal getDayLow(){
-		return dayLow;
+	
+	public BigDecimal getDayLow() {
+		return getQuote().getDayLow();
 	}
 	public BigDecimal getFtWkHigh(){
-		return ftWkHigh;
+		return getQuote().getYearHigh();
 	}
 	public BigDecimal getFtWkLow(){
-		return ftWkLow;
+		return getQuote().getYearLow();
 	}
-	public BigDecimal getPrice(){
-		return price;
+	public BigDecimal getPrice() {
+		return getQuote().getPrice();
 	}
-	public BigDecimal getEPS(){
-		return eps;
+	public BigDecimal getEPS() {
+		return getStats().getEps();
 	}
-	public long getNumberOfShares(){
-		return shares;
+	public long getNumberOfShares() {
+		return getStats().getSharesOutstanding();
 	}
-	public long getVolume(){
-		return volume;
+	public long getVolume() {
+		return getQuote().getVolume();
 	}
+	
 }
