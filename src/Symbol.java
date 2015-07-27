@@ -5,26 +5,21 @@ import java.util.Calendar;
 import java.util.List;
 
 import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
-public class Symbol {
-	String symbol;
-	BigDecimal price, change, dayHigh, dayLow, ftWkHigh, ftWkLow, eps;
-	long volume, shares;
+public class Symbol extends Stock {
 	
-	public Symbol(String stock) throws IOException{
-		setInfo(stock);
+	public Symbol(String symbol) {
+		super(symbol);
 	}
 	 
 	//Returns History
 	public List<HistoricalQuote> getHistory(int months) throws IOException{
-		Stock t = YahooFinance.get(symbol);
 		Calendar from = Calendar.getInstance();
 		Calendar to = Calendar.getInstance();
 		from.add(Calendar.MONTH, - months); //4 Months Ago
-		List<HistoricalQuote> quotes = t.getHistory(from, to, Interval.DAILY);
+		List<HistoricalQuote> quotes = getHistory(from, to, Interval.DAILY);
 		return quotes;
 	}
 	
@@ -37,12 +32,11 @@ public class Symbol {
 	 * @throws IOException
 	 */
 	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {
-		Stock t = YahooFinance.get(symbol);
 		Calendar from = Calendar.getInstance();
 		
 		// Grab history of more days than necessary. We'll filter out what we don't need later
 		from.add(Calendar.DAY_OF_MONTH, - (2 * (daysAgo + days)));
-		List<HistoricalQuote> quotes = t.getHistory(from, Interval.DAILY);
+		List<HistoricalQuote> quotes = getHistory(from, Interval.DAILY);
 		// Filter the list down to what we need
 		quotes = quotes.subList(daysAgo, daysAgo + days); 
 		
@@ -50,9 +44,33 @@ public class Symbol {
 	}
 	
 	/**
+	 * Returns a historical adjusted closing price of a stock
+	 * @author Michael Bick
+	 * @param daysAgo amount of days ago to get the closing price from
+	 * @return historical adjusted closing price
+	 * @throws IOException
+	 */
+	public BigDecimal getAdjClose(int daysAgo) throws IOException {
+		List<HistoricalQuote> quotes = getHistory(daysAgo, 1);
+		return quotes.get(0).getAdjClose();
+	}
+	
+	/**
+	 * Returns a historical volume of shares traded
+	 * @author Michael Bick
+	 * @param daysAgo amount of days ago to get the volume from
+	 * @return volume of shares traded
+	 * @throws IOException
+	 */
+	public long getVolume(int daysAgo) throws IOException {
+		List<HistoricalQuote> quotes = getHistory(daysAgo, 1);
+		return quotes.get(0).getVolume();
+	}
+	
+	/**
 	 *  Returns a moving average from a stock's history
 	 * @author Michael Bick
-	 * @param daysAgo days ago the moving average is from
+	 * @param daysAgo amount of days ago the moving average is from
 	 * @param days amount of days to use in the moving average
 	 * @return moving average
 	 * @throws IOException
@@ -74,70 +92,52 @@ public class Symbol {
 	}
 	
 	/**
-	 * Returns a linear prediction of a stock's price using the slope of the moving average
+	 * Returns an array containing different features to use in a stock prediction
 	 * @author Michael Bick
-	 * @param daysAgo days ago the moving average is predicted from
-	 * @param days days used in calculating the moving averages
-	 * @param int futureDays days into the future to predict to
-	 * @return returns predicted price
+	 * @param daysAgo amount of days ago to get the features from
+	 * @return array containing features
+	 * @throws IOException
 	 */
-	public BigDecimal getMAPrediction(int daysAgo, int days, int futureDays) throws IOException {
-		// Calculate moving averages
-		BigDecimal day1 = getMA(daysAgo, days - 1);
-		BigDecimal day2 = getMA(daysAgo - 1, days - 1);
+	public double[] getFeatures(int daysAgo) throws IOException {
+		int NUM_FEATURES = 3;
 		
-		// Calculate slope
-		BigDecimal slope = day1.subtract(day2);
+		double[] features = new double[NUM_FEATURES + 1];
 		
-		// Get day1 closing price
-		BigDecimal closePrice = getHistory(daysAgo, 1).remove(0).getAdjClose();
+		features[0] = 1.0;
+		features[1] = getMA(daysAgo, 50).doubleValue();
+		features[2] = getAdjClose(daysAgo).doubleValue();
+		features[3] = (double)getVolume(daysAgo);
+		// Need function to get EPS
+		// Need function to get year high
 		
-		// Return calculated prediction
-		return closePrice.add(slope.multiply(new BigDecimal(futureDays)));
+		return features;
 	}
-		
-	//Sets Features
-	private void setInfo(String ticker) throws IOException{
-		Stock stock = YahooFinance.get(ticker);
-		symbol = ticker;
-		price = stock.getQuote().getPrice();
-		change = stock.getQuote().getChangeInPercent();
-		volume =stock.getQuote().getVolume();  
-		dayHigh = stock.getQuote().getDayHigh(); 
-	 	dayLow = stock.getQuote().getDayLow(); 
-	 	ftWkHigh = stock.getQuote().getYearHigh(); 
-	 	ftWkLow = stock.getQuote().getYearLow(); 
-	 	eps = stock.getStats().getEps();
-	 	shares = stock.getStats().getSharesOutstanding();
-	 	// BigDecimal twoHundredChange = stock.getQuote().getChangeFromAvg200();
-	} 
 	
-	//Returns Features
-	public String getSymbol(){
-		return symbol;
+	public BigDecimal getPrice() {
+		return getQuote().getPrice();
 	}
-	public BigDecimal getDayHigh(){
-		return dayHigh;
+	/*
+	public BigDecimal getDayHigh() {
+		return getQuote().getDayHigh();
 	}
-	public BigDecimal getDayLow(){
-		return dayLow;
+	
+	public BigDecimal getDayLow() {
+		return getQuote().getDayLow();
 	}
 	public BigDecimal getFtWkHigh(){
-		return ftWkHigh;
+		return getQuote().getYearHigh();
 	}
 	public BigDecimal getFtWkLow(){
-		return ftWkLow;
+		return getQuote().getYearLow();
 	}
-	public BigDecimal getPrice(){
-		return price;
+	public BigDecimal getEPS() {
+		return getStats().getEps();
 	}
-	public BigDecimal getEPS(){
-		return eps;
+	public long getNumberOfShares() {
+		return getStats().getSharesOutstanding();
 	}
-	public long getNumberOfShares(){
-		return shares;
+	public long getVolume() {
+		return getQuote().getVolume();
 	}
-	public long getVolume(){
-		return volume;
-	}
+	*/
 }
