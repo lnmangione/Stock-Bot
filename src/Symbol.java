@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -10,6 +11,10 @@ import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
 public class Symbol extends Stock {
+	
+	// Keep historical data that we have already pulled to speed up getHistory method
+	private List<HistoricalQuote> history;
+	private int lastDay = 0;
 	
 	public Symbol(String symbol) throws IOException {
 		super(symbol);
@@ -37,17 +42,33 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {
-		Calendar from = Calendar.getInstance();
 		
-		// Grab history of more days than necessary. We'll filter out what we don't need later
-		from.add(Calendar.DAY_OF_MONTH, - (2 * (daysAgo + days)));
-		List<HistoricalQuote> quotes = getHistory(from, Interval.DAILY);
+		// Create an integer to hold the farthest back day requested
+		int fromDay = daysAgo + days;
+		// Create an integer to hold what the new last day will be
+		int newDay = 2 * fromDay;
+		
+		// Only get more historical data if we don't have enough stored
+		if (lastDay < newDay) {			
+			Calendar from = Calendar.getInstance();
+			
+			// Grab history of more days than necessary. We'll filter out what we don't need later
+			from.add(Calendar.DAY_OF_MONTH, - newDay);
+			
+			// Add neccessary information to the list of history
+			List<HistoricalQuote> newHistory = new ArrayList<HistoricalQuote>();
+			newHistory.addAll(getHistory(from, Interval.DAILY));
+			newHistory.addAll(history);
+			history = newHistory;
+			
+			// Update lastDay since we now have more information
+			lastDay = newDay;
+		}
+		
 		// Filter the list down to what we need
-		quotes = quotes.subList(daysAgo, daysAgo + days); 
-		
-		return quotes;
+		return history.subList(daysAgo, fromDay);
 	}
-	
+
 	/**
 	 * Returns a historical adjusted closing price of a stock
 	 * @author Michael Bick
