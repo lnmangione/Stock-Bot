@@ -5,18 +5,13 @@ import java.util.Calendar;
 import java.util.List;
 
 import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
 public class Symbol extends Stock {
 	
-	public Symbol(String symbol) throws IOException {
+	public Symbol(String symbol) {
 		super(symbol);
-		Stock stock = YahooFinance.get(symbol);
-		setQuote(stock.getQuote());
-		setStats(stock.getStats());
-		setDividend(stock.getDividend());
 	}
 	 
 	//Returns History
