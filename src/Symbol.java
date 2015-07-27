@@ -42,31 +42,15 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {
+		Calendar from = Calendar.getInstance();
 		
-		// Create an integer to hold the farthest back day requested
-		int fromDay = daysAgo + days;
-		// Create an integer to hold what the new last day will be
-		int newDay = 2 * fromDay;
-		
-		// Only get more historical data if we don't have enough stored
-		if (lastDay < newDay) {			
-			Calendar from = Calendar.getInstance();
-			
-			// Grab history of more days than necessary. We'll filter out what we don't need later
-			from.add(Calendar.DAY_OF_MONTH, - newDay);
-			
-			// Add neccessary information to the list of history
-			List<HistoricalQuote> newHistory = new ArrayList<HistoricalQuote>();
-			newHistory.addAll(getHistory(from, Interval.DAILY));
-			newHistory.addAll(history);
-			history = newHistory;
-			
-			// Update lastDay since we now have more information
-			lastDay = newDay;
-		}
-		
+		// Grab history of more days than necessary. We'll filter out what we don't need later
+		from.add(Calendar.DAY_OF_MONTH, - (2 * (daysAgo + days)));
+		List<HistoricalQuote> quotes = getHistory(from, Interval.DAILY);
 		// Filter the list down to what we need
-		return history.subList(daysAgo, fromDay);
+		quotes = quotes.subList(daysAgo, daysAgo + days); 
+		
+		return quotes;
 	}
 	
 	/**
