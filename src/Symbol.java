@@ -72,29 +72,6 @@ public class Symbol {
 		
 		return ma;
 	}
-	
-	/**
-	 * Returns a linear prediction of a stock's price using the slope of the moving average
-	 * @author Michael Bick
-	 * @param daysAgo days ago the moving average is predicted from
-	 * @param days days used in calculating the moving averages
-	 * @param int futureDays days into the future to predict to
-	 * @return returns predicted price
-	 */
-	public BigDecimal getMAPrediction(int daysAgo, int days, int futureDays) throws IOException {
-		// Calculate moving averages
-		BigDecimal day1 = getMA(daysAgo, days - 1);
-		BigDecimal day2 = getMA(daysAgo - 1, days - 1);
-		
-		// Calculate slope
-		BigDecimal slope = day1.subtract(day2);
-		
-		// Get day1 closing price
-		BigDecimal closePrice = getHistory(daysAgo, 1).remove(0).getAdjClose();
-		
-		// Return calculated prediction
-		return closePrice.add(slope.multiply(new BigDecimal(futureDays)));
-	}
 		
 	//Sets Features
 	private void setInfo(String ticker) throws IOException{
