@@ -7,7 +7,7 @@ import yahoofinance.histquotes.HistoricalQuote;
 public class RegressionAlgorithm {
 	
 	//LinearLearner using Gradient Descent function
-	public static double[] LinearLearner(Symbol[] symbolsArray, double learningRate) throws IOException{
+	public static double[] linearLearner(Symbol[] symbolsArray, double learningRate) throws IOException{
 		//Inputs:
 			//Array of symbols, s0 to sn where n is number of symbols	
 			//Learning rate (0 to 1), lets use 0.1
@@ -29,7 +29,7 @@ public class RegressionAlgorithm {
 		//For each symbol si
 		for (Symbol symbol: symbolsArray){
 			//Create array of features x0 to xn, by calculating each value for si
-			double[] featuresArray = new double[numFeatures];
+			double[] featuresArray = new double[numFeatures + 1];
 			//FIX -- manually set values of array: eps, price, volume, ftWkHigh
 			//x0 is always initialized to 1
 			featuresArray[0] = 1.0;
@@ -45,7 +45,7 @@ public class RegressionAlgorithm {
 			
 			//Predicted y is w0 * x0 + w1 * x1 + ... + wn * xn
 			double predictedRatio = 0.0;
-			for (int i = 0; i < numFeatures; i ++){
+			for (int i = 0; i < numFeatures + 1; i ++){
 				predictedRatio += weightsArray[i] * featuresArray[i];
 			}
 			
@@ -53,7 +53,7 @@ public class RegressionAlgorithm {
 			double delta = actualRatio - predictedRatio;
 		
 			//for a < # features
-			for (int i = 0; i < numFeatures; i++){
+			for (int i = 0; i < numFeatures + 1; i++){
 				//update weights
 				//wa = wa + learningRate * deltaY * si.getFeatureA	
 				weightsArray[i] = weightsArray[i] + learningRate * delta * featuresArray[i];
@@ -63,6 +63,23 @@ public class RegressionAlgorithm {
 				
 		//Return weights
 		return weightsArray;
+	}
+	
+	public static double predict1MonthRatio(Symbol symbol, double[] weightsArray){
+		//FIX -- manually set values of array: eps, price, volume, ftWkHigh
+		double[] featuresArray = new double[5];
+		featuresArray[0] = 1.0;
+		featuresArray[1] = symbol.getEPS().doubleValue();
+		featuresArray[2] = symbol.getPrice().doubleValue();
+		featuresArray[3] = (double)symbol.getVolume();
+		featuresArray[4] = symbol.getFtWkHigh().doubleValue();
+		
+		double predictedRatio = 0.0;
+		for (int i = 0; i < 5; i ++){
+			predictedRatio += weightsArray[i] * featuresArray[i];
+		}
+		
+		return predictedRatio;
 	}
 }
 	
