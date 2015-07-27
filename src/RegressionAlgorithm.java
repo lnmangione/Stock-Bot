@@ -7,13 +7,13 @@ import yahoofinance.histquotes.HistoricalQuote;
 public class RegressionAlgorithm {
 	
 	//LinearLearner using Gradient Descent function
-	public static double[] linearLearner(Symbol[] symbolsArray, double learningRate) throws IOException{
+	public static double[] linearLearner(Symbol[] symbolsArray, int daysAgo, double learningRate) throws IOException{
 		//Inputs:
 			//Array of symbols, s0 to sn where n is number of symbols	
 			//Learning rate (0 to 1), lets use 0.1
 
 		//Number of features
-		int numFeatures = 3;
+		int numFeatures = symbolsArray[0].getFeatures(daysAgo).length;
 
 		//Array of weights, w0 to wn where n is number of features
 		double[] weightsArray = new double[numFeatures + 1];
@@ -30,7 +30,7 @@ public class RegressionAlgorithm {
 		//For each symbol si
 		for (Symbol symbol: symbolsArray){
 			//Create array of features x0 to xn, by calculating each value for si
-			double[] featuresArray = symbol.getFeatures(0);
+			double[] featuresArray = symbol.getFeatures(daysAgo);
 
 			//y (ratio) is stock end value / starting value, thus 1.3 would be 30% increase
 			double actualY = symbol.getPrice().doubleValue();
@@ -65,21 +65,23 @@ public class RegressionAlgorithm {
 		return weightsArray;
 	}
 
-	public static double predict1MonthRatio(Symbol symbol, double[] weightsArray) throws IOException{
-	//FIX -- manually set values of array: eps, price, volume, ftWkHigh
-			double[] featuresArray = symbol.getFeatures(0);
+	public static double predictY(Symbol symbol, double[] weightsArray) throws IOException{
+		double[] featuresArray = symbol.getFeatures(0);
 
 		double predictedY = 0.0;
-		for (int i = 0; i < 4; i ++){
-			predictedY += weightsArray[i] * featuresArray[i];
-
-			System.out.print(weightsArray[i] + ", " + featuresArray[i]);		
+		for (int i = 0; i < featuresArray.length + 1; i ++){
+			predictedY += weightsArray[i] * featuresArray[i];		
 		}
 
-
-		System.out.print("Predicted: " + predictedY + ", Actual: " + symbol.getPrice());
-
 		return predictedY;
+	}
+	
+	public static double computeCost(Symbol[] symbolsArray, double[] weightsArray) throws IOException{
+		double totalError = 0.0;
+		for (Symbol symbol: symbolsArray){
+			totalError += Math.pow(symbol.getPrice().doubleValue() - predictY(symbol, weightsArray), 2);
+		}		
+		return totalError / symbolsArray.length;
 	}
 }
 
