@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by MichaelBick on 7/28/15.
@@ -7,11 +8,11 @@ import java.io.IOException;
 public class GradientDescent {
 	
 	public static void main(String[] args) throws IOException {
-		Symbol symbol = new Symbol("AAPL");
+		Symbol symbol = new Symbol("LVS");
 		
 		int FUTURE_DAYS = 10;
-		int NUM_POINTS = 200;
-		int TEST_SET = 100;
+		int NUM_POINTS = 10;
+		int TEST_SET = 20;
 		
 		double[][] data = new double[NUM_POINTS][symbol.getFeatures(0).length];
 		double[] future = new double[NUM_POINTS];
@@ -23,38 +24,42 @@ public class GradientDescent {
 			future[i] = symbol.getAdjClose(i + TEST_SET - FUTURE_DAYS).doubleValue();
 		}
 		
-		theta = getWeights(data, future, theta, .01, 1000);
+		theta = getWeights(data, future, theta, .0001, 1000);
 		
-		System.out.println(theta);
+		int test = 3;
+		System.out.println("Actual: " + future[test]);
+		System.out.println("Prediction: " + (theta[0] + (theta[1] * data[test][1])));
 	}
 	
     public static double[] getWeights(double[][] inputs, double[] outputs, double[] theta, double alpha, int numIters) {
         int m = outputs.length;
-        int numPoints = inputs[0].length;
+        int numFeatures = inputs[0].length;
         
         for (int i = 0; i < numIters; i++) {
         	// Calculate predictions
-        	double[] predictions = new double[numPoints];
+        	double[] predictions = new double[m];
         	
-        	for (int j = 0; j < numPoints; j++) {
+        	for (int j = 0; j < m; j++) {
         		// multiply each feature of data by its weight, sum, and then put in predictions
-        		for (int k = 0; k < inputs[0].length; k++) {
+        		for (int k = 0; k < numFeatures; k++) {
         			predictions[j] += inputs[j][k] * theta[k];
         		}
         	}
         	
         	// Calculate error
-        	double[] errorSums = new double[m];
+        	double[] errorSums = new double[numFeatures];
         	
-        	for (int j = 0; j < m; j++) {
-        		for (int k = 0; k < numPoints; k++) {
+        	for (int j = 0; j < numFeatures; j++) {
+        		for (int k = 0; k < m; k++) {
         			errorSums[j] += (predictions[k] - outputs[k]) * inputs[k][j];
         		}
         	}
         	
-        	for (int j = 0; j < m; j++) {
+        	for (int j = 0; j < numFeatures; j++) {
         		theta[j] -= alpha * (1.0 / m) * errorSums[j];
         	}
+        	
+        	// System.out.println(Arrays.toString(theta));
         }
         
         return theta;
