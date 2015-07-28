@@ -16,7 +16,7 @@ public class RegressionAlgorithm {
 		int numFeatures = symbolsArray[0].getFeatures(daysAgo).length;
 
 		//Array of weights, w0 to wn where n is number of features
-		double[] weightsArray = new double[numFeatures + 1];
+		double[] weightsArray = new double[numFeatures];
 
 		//Weights randomly initialized from all real numbers
 		Random rand = new Random();
@@ -27,34 +27,34 @@ public class RegressionAlgorithm {
 		}
 
 
-		//For each symbol si
-		for (Symbol symbol: symbolsArray){
-			//Create array of features x0 to xn, by calculating each value for si
-			double[] featuresArray = symbol.getFeatures(daysAgo);
+		//Update weights 500 times
+		for (int i = 0; i < 500; i++){
 
-			//y (ratio) is stock end value / starting value, thus 1.3 would be 30% increase
-			double actualY = symbol.getPrice().doubleValue();
+			//For each symbol si
+			for (Symbol symbol: symbolsArray){
+				//Create array of features x0 to xn, by calculating each value for si
+				double[] featuresArray = symbol.getFeatures(daysAgo);
 
-			//Update weights 50 times
-			for (int i = 0; i < 50; i++){
-
-				//Predicted y is w0 * x0 + w1 * x1 + ... + wn * xn
-				double predictedY = 0.0;
-				for (int b = 0; b < numFeatures + 1; b ++){
-					predictedY += weightsArray[b] * featuresArray[b];
-				}
-
-				//DeltaY = actualY - predictedY
-				double delta = actualY - predictedY;
-
-				System.out.print("Actual: " + actualY + ", Predicted: " + predictedY + ", Delta: " + delta + "\n");
+				//y (ratio) is stock end value / starting value, thus 1.3 would be 30% increase
+				double actualY = symbol.getPrice().doubleValue();
 
 				//for a < # features
-				for (int a = 0; a < numFeatures + 1; a++){
+				for (int a = 0; a < numFeatures; a++){
+					//Predicted y is w0 * x0 + w1 * x1 + ... + wn * xn
+					double predictedY = 0.0;
+					for (int b = 0; b < numFeatures; b ++){
+						predictedY += weightsArray[b] * featuresArray[b];
+					}
+					//DeltaY = actualY - predictedY
+					double delta = predictedY - actualY;
+
+					double derivative = 0.0;
+					for (int b = 0; b < numFeatures; b ++){
+						derivative += delta * featuresArray[b];
+					}
+					derivative *= 1.0 / (numFeatures);
 					//update weights
-					//wa = wa + learningRate * deltaY * si.getFeatureA	
-					weightsArray[a] = weightsArray[a] + learningRate * delta / featuresArray[a];
-					//System.out.print("\n Weight: " + weightsArray[a]);
+					weightsArray[a] = weightsArray[a] - learningRate * derivative;
 				}
 
 			}
@@ -65,21 +65,23 @@ public class RegressionAlgorithm {
 		return weightsArray;
 	}
 
-	public static double predictY(Symbol symbol, double[] weightsArray) throws IOException{
-		double[] featuresArray = symbol.getFeatures(0);
+	public static double predictY(Symbol symbol, int daysAgo, double[] weightsArray) throws IOException {
+		double[] featuresArray = symbol.getFeatures(daysAgo);
 
 		double predictedY = 0.0;
-		for (int i = 0; i < featuresArray.length + 1; i ++){
+		for (int i = 0; i < featuresArray.length; i ++) {
 			predictedY += weightsArray[i] * featuresArray[i];		
 		}
 
+		System.out.print("Actual: " + symbol.getPrice().doubleValue() +", Predicted: " + predictedY);
+
 		return predictedY;
 	}
-	
-	public static double computeCost(Symbol[] symbolsArray, double[] weightsArray) throws IOException{
+
+	public static double computeCost(Symbol[] symbolsArray, int daysAgo, double[] weightsArray) throws IOException {
 		double totalError = 0.0;
 		for (Symbol symbol: symbolsArray){
-			totalError += Math.pow(symbol.getPrice().doubleValue() - predictY(symbol, weightsArray), 2);
+			totalError += Math.pow(symbol.getPrice().doubleValue() - predictY(symbol, daysAgo, weightsArray), 2);
 		}		
 		return totalError / symbolsArray.length;
 	}
