@@ -1,8 +1,33 @@
+import java.io.IOException;
+
 /**
  * Created by MichaelBick on 7/28/15.
  * first dimension of inputs is the data point, second dimension is the feature number
  */
 public class GradientDescent {
+	
+	public static void main(String[] args) throws IOException {
+		Symbol symbol = new Symbol("AAPL");
+		
+		int FUTURE_DAYS = 10;
+		int NUM_POINTS = 200;
+		int TEST_SET = 100;
+		
+		double[][] data = new double[NUM_POINTS][symbol.getFeatures(0).length];
+		double[] future = new double[NUM_POINTS];
+		double[] theta = new double[data[0].length];
+		
+		// Add features to inputs and future price to outputs
+		for (int i = 0; i < NUM_POINTS; i++) {
+			data[i] = symbol.getFeatures(i + TEST_SET);
+			future[i] = symbol.getAdjClose(i + TEST_SET - FUTURE_DAYS).doubleValue();
+		}
+		
+		theta = getWeights(data, future, theta, .01, 1000);
+		
+		System.out.println(theta);
+	}
+	
     public static double[] getWeights(double[][] inputs, double[] outputs, double[] theta, double alpha, int numIters) {
         int m = outputs.length;
         int numPoints = inputs[0].length;
