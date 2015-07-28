@@ -1,0 +1,15 @@
+
+bin/
+dist/
+build/
+
+*.class
+
+# IntelliJ files
+.idea/
+*.iml
+
+# Eclipse
+.settings/
+
+*.xml
