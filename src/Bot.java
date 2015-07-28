@@ -15,12 +15,13 @@ public class Bot {
 		symbol = new Symbol(stock);
 		*/
 		
-		symbol = new Symbol("^GSPC");
+		symbol = new Symbol("AAPL");
 		
 		System.out.println("Symbol: " + symbol.getSymbol());
 		System.out.println("Price: " + ds + symbol.getPrice());
 		// System.out.println("Shares: " + symbol.getNumberOfShares());
-		System.out.println("Moving Average: " + symbol.getMA(0, 100));
+		System.out.println("Moving Average: " + symbol.getMA(0, 200));
+		System.out.println("Moving Average: " + symbol.getMA(0, 50));
 		
 		sc.close();
 	}

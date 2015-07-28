@@ -13,7 +13,7 @@ import yahoofinance.histquotes.Interval;
 public class Symbol extends Stock {
 	
 	// Keep historical data that we have already pulled to speed up getHistory method
-	private List<HistoricalQuote> history = new ArrayList<HistoricalQuote>(0);
+	private List<HistoricalQuote> history;
 	private int lastDay = 0;
 	
 	public Symbol(String symbol) throws IOException {
@@ -34,7 +34,7 @@ public class Symbol extends Stock {
 	}
 	
 	/**
-	 * Returns list of historical quotes using days
+	 * Returns list of historical quotes using days from most to least recent
 	 * @author Michael Bick
 	 * @param daysAgo days ago the first quote is from
 	 * @param days amount of days of historical quotes
@@ -54,18 +54,16 @@ public class Symbol extends Stock {
 			
 			// Grab history of more days than necessary. We'll filter out what we don't need later
 			from.add(Calendar.DAY_OF_MONTH, - newDay);
-			
-			// Add neccessary information to the list of history
-			List<HistoricalQuote> newHistory = new ArrayList<HistoricalQuote>();
-			newHistory.addAll(getHistory(from, Interval.DAILY));
-			newHistory.addAll(history);
-			history = newHistory;
+
+			// Update list of historical data with new historical data
+			history = getHistory(from, Interval.DAILY);
 			
 			// Update lastDay since we now have more information
 			lastDay = newDay;
 		}
 		
 		// Filter the list down to what we need
+		// Only subtract 1 from first parameter because it is inclusive
 		return history.subList(daysAgo, fromDay);
 	}
 
@@ -104,7 +102,7 @@ public class Symbol extends Stock {
 	public BigDecimal getMA(int daysAgo, int days) throws IOException {
 		// Gets historical quotes
 		List<HistoricalQuote> quotes = getHistory(daysAgo, days);
-		
+
 		// Calculate the moving average
 		BigDecimal ma = new BigDecimal(0);
 		for (HistoricalQuote quote : quotes) {
