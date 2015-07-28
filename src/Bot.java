@@ -15,7 +15,7 @@ public class Bot {
 		symbol = new Symbol(stock);
 		*/
 
-		symbol = new Symbol("^GSPC");
+		symbol = new Symbol("AAPL");
 
 		/*
 		System.out.println("Symbol: " + symbol.getSymbol());
@@ -23,7 +23,9 @@ public class Bot {
 		// System.out.println("Shares: " + symbol.getNumberOfShares());
 		System.out.println("Moving Average: " + symbol.getMA(0, 200));
 		System.out.println("Moving Average: " + symbol.getMA(0, 50));
+		System.out.println("Closing Price: " + symbol.getAdjClose(30));
 		*/
+
 
 		Symbol[] trainingSet = new Symbol[5];
 		trainingSet[0] = new Symbol("^GSPC");
@@ -34,7 +36,7 @@ public class Bot {
 
 		double[] weightsArray = RegressionAlgorithm.linearLearner(trainingSet, 7, 0.1);
 		RegressionAlgorithm.predictY(new Symbol("AAPL"), 10, weightsArray);
-		
+
 		sc.close();
 	}
 }

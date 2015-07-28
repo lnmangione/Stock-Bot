@@ -23,15 +23,6 @@ public class Symbol extends Stock {
 		setStats(stock.getStats());
 		setDividend(stock.getDividend());
 	}
-	 
-	//Returns History
-	public List<HistoricalQuote> getHistory(int months) throws IOException{
-		Calendar from = Calendar.getInstance();
-		Calendar to = Calendar.getInstance();
-		from.add(Calendar.MONTH, -months); //4 Months Ago
-		List<HistoricalQuote> quotes = getHistory(from, to, Interval.DAILY);
-		return quotes;
-	}
 	
 	/**
 	 * Returns list of historical quotes using days from most to least recent
@@ -132,14 +123,15 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public double[] getFeatures(int daysAgo) throws IOException {
-		int NUM_FEATURES = 3;
+		int NUM_FEATURES = 4;
 		
 		double[] features = new double[NUM_FEATURES + 1];
 		
 		features[0] = 1.0;
-		features[1] = getMA(daysAgo, 50).doubleValue();
-		features[2] = getAdjClose(daysAgo).doubleValue();
-		features[3] = (double)getVolume(daysAgo);
+		features[1] = getAdjClose(daysAgo).doubleValue();
+		features[2] = getMA(daysAgo, 50).doubleValue();
+		features[3] = getMA(daysAgo, 200).doubleValue();
+		features[4] = (double)getVolume(daysAgo);
 		// Need function to get EPS
 		// Need function to get year high
 		
