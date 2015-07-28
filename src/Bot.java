@@ -9,11 +9,11 @@ public class Bot {
 		Scanner sc = new Scanner(System.in);
 		
 		/*
-		// Get a stock sybol to check
+		// Get a stock symbol to check
 		System.out.print("Stock: ");
 		String stock = sc.next();
 		symbol = new Symbol(stock);
-		*/
+		
 		
 		symbol = new Symbol("^GSPC");
 		
@@ -21,6 +21,17 @@ public class Bot {
 		System.out.println("Price: " + ds + symbol.getPrice());
 		// System.out.println("Shares: " + symbol.getNumberOfShares());
 		System.out.println("Moving Average: " + symbol.getMA(0, 50));
+		*/
+		
+		Symbol[] trainingSet = new Symbol[5];
+		trainingSet[0] = new Symbol("^GSPC");
+		trainingSet[0] = new Symbol("GOOGL");
+		trainingSet[0] = new Symbol("ACE");
+		trainingSet[0] = new Symbol("HD");
+		trainingSet[0] = new Symbol("HP");
+		
+		double[] weightsArray = RegressionAlgorithm.linearLearner(trainingSet, 7, 0.1);
+		RegressionAlgorithm.predictY(new Symbol("AAPL"), 10, weightsArray);
 		
 		sc.close();
 	}
