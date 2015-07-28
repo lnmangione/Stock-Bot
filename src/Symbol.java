@@ -34,7 +34,7 @@ public class Symbol extends Stock {
 	}
 	
 	/**
-	 * Returns list of historical quotes using days
+	 * Returns list of historical quotes using days from most to least recent
 	 * @author Michael Bick
 	 * @param daysAgo days ago the first quote is from
 	 * @param days amount of days of historical quotes
@@ -42,26 +42,29 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {
-		Calendar from = Calendar.getInstance();
 		
-		// Grab history of more days than necessary. We'll filter out what we don't need later
-		from.add(Calendar.DAY_OF_MONTH, - (2 * (daysAgo + days)));
-		List<HistoricalQuote> quotes = getHistory(from, Interval.DAILY);
+		// Create an integer to hold the farthest back day requested
+		int fromDay = daysAgo + days;
+		// Create an integer to hold what the new last day will be
+		int newDay = 2 * fromDay;
+		
+		// Only get more historical data if we don't have enough stored
+		if (lastDay < newDay) {			
+			Calendar from = Calendar.getInstance();
+			
+			// Grab history of more days than necessary. We'll filter out what we don't need later
+			from.add(Calendar.DAY_OF_MONTH, - newDay);
+
+			// Update list of historical data with new historical data
+			history = getHistory(from, Interval.DAILY);
+			
+			// Update lastDay since we now have more information
+			lastDay = newDay;
+		}
+		
 		// Filter the list down to what we need
-		quotes = quotes.subList(daysAgo, daysAgo + days); 
-		
-		return quotes;
-	}
-	
-	/**
-	 * Returns one day of historical information
-	 * @author Michael Bick
-	 * @param daysAgo amount of days ago to get information from
-	 * @return historical quote from a given amount of days ago
-	 * @throws IOException
-	 */
-	public HistoricalQuote getDay(int daysAgo) throws IOException {
-		return getHistory(daysAgo, 1).get(0);
+		// Only subtract 1 from first parameter because it is inclusive
+		return history.subList(daysAgo, fromDay);
 	}
 
 	/**
@@ -72,7 +75,8 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public BigDecimal getAdjClose(int daysAgo) throws IOException {
-		return getDay(daysAgo).getAdjClose();
+		List<HistoricalQuote> quotes = getHistory(daysAgo, 1);
+		return quotes.get(0).getAdjClose();
 	}
 	
 	/**
@@ -83,7 +87,8 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public long getVolume(int daysAgo) throws IOException {
-		return getDay(daysAgo).getVolume();
+		List<HistoricalQuote> quotes = getHistory(daysAgo, 1);
+		return quotes.get(0).getVolume();
 	}
 	
 	/**
@@ -97,7 +102,7 @@ public class Symbol extends Stock {
 	public BigDecimal getMA(int daysAgo, int days) throws IOException {
 		// Gets historical quotes
 		List<HistoricalQuote> quotes = getHistory(daysAgo, days);
-		
+
 		// Calculate the moving average
 		BigDecimal ma = new BigDecimal(0);
 		for (HistoricalQuote quote : quotes) {
