@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -10,6 +11,10 @@ import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
 public class Symbol extends Stock {
+	
+	// Keep historical data that we have already pulled to speed up getHistory method
+	private List<HistoricalQuote> history;
+	private int lastDay = 0;
 	
 	public Symbol(String symbol) throws IOException {
 		super(symbol);
@@ -49,6 +54,17 @@ public class Symbol extends Stock {
 	}
 	
 	/**
+	 * Returns one day of historical information
+	 * @author Michael Bick
+	 * @param daysAgo amount of days ago to get information from
+	 * @return historical quote from a given amount of days ago
+	 * @throws IOException
+	 */
+	public HistoricalQuote getDay(int daysAgo) throws IOException {
+		return getHistory(daysAgo, 1).get(0);
+	}
+
+	/**
 	 * Returns a historical adjusted closing price of a stock
 	 * @author Michael Bick
 	 * @param daysAgo amount of days ago to get the closing price from
@@ -56,8 +72,7 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public BigDecimal getAdjClose(int daysAgo) throws IOException {
-		List<HistoricalQuote> quotes = getHistory(daysAgo, 1);
-		return quotes.get(0).getAdjClose();
+		return getDay(daysAgo).getAdjClose();
 	}
 	
 	/**
@@ -68,8 +83,7 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public long getVolume(int daysAgo) throws IOException {
-		List<HistoricalQuote> quotes = getHistory(daysAgo, 1);
-		return quotes.get(0).getVolume();
+		return getDay(daysAgo).getVolume();
 	}
 	
 	/**
