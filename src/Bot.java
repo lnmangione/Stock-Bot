@@ -25,10 +25,10 @@ public class Bot {
 		
 		Symbol[] trainingSet = new Symbol[5];
 		trainingSet[0] = new Symbol("^GSPC");
-		trainingSet[0] = new Symbol("GOOGL");
-		trainingSet[0] = new Symbol("ACE");
-		trainingSet[0] = new Symbol("HD");
-		trainingSet[0] = new Symbol("HP");
+		trainingSet[1] = new Symbol("GOOGL");
+		trainingSet[2] = new Symbol("ACE");
+		trainingSet[3] = new Symbol("HD");
+		trainingSet[4] = new Symbol("HP");
 		
 		double[] weightsArray = RegressionAlgorithm.linearLearner(trainingSet, 7, 0.1);
 		RegressionAlgorithm.predictY(new Symbol("AAPL"), 10, weightsArray);

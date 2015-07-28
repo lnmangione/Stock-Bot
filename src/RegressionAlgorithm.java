@@ -74,6 +74,8 @@ public class RegressionAlgorithm {
 		for (int i = 0; i < featuresArray.length; i ++){
 			predictedY += weightsArray[i] * featuresArray[i];		
 		}
+		
+		System.out.print("Actual: " + symbol.getPrice().doubleValue() +", Predicted: " + predictedY);
 
 		return predictedY;
 	}
