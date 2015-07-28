@@ -28,7 +28,7 @@ public class Symbol extends Stock {
 	public List<HistoricalQuote> getHistory(int months) throws IOException{
 		Calendar from = Calendar.getInstance();
 		Calendar to = Calendar.getInstance();
-		from.add(Calendar.MONTH, - months); //4 Months Ago
+		from.add(Calendar.MONTH, -months); //4 Months Ago
 		List<HistoricalQuote> quotes = getHistory(from, to, Interval.DAILY);
 		return quotes;
 	}
@@ -53,7 +53,7 @@ public class Symbol extends Stock {
 			Calendar from = Calendar.getInstance();
 			
 			// Grab history of more days than necessary. We'll filter out what we don't need later
-			from.add(Calendar.DAY_OF_MONTH, - newDay);
+			from.add(Calendar.DAY_OF_MONTH, -newDay);
 
 			// Update list of historical data with new historical data
 			history = getHistory(from, Interval.DAILY);
@@ -68,6 +68,17 @@ public class Symbol extends Stock {
 	}
 
 	/**
+	 * Returns one day of historical information
+	 * @author Michael Bick
+	 * @param daysAgo amount of days ago to get information from
+	 * @return historical quote from a given amount of days ago
+	 * @throws IOException
+	 */
+	public HistoricalQuote getDay(int daysAgo) throws IOException {
+		return getHistory(daysAgo, 1).get(0);
+	}
+
+	/**
 	 * Returns a historical adjusted closing price of a stock
 	 * @author Michael Bick
 	 * @param daysAgo amount of days ago to get the closing price from
@@ -75,8 +86,7 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public BigDecimal getAdjClose(int daysAgo) throws IOException {
-		List<HistoricalQuote> quotes = getHistory(daysAgo, 1);
-		return quotes.get(0).getAdjClose();
+		return getDay(daysAgo).getAdjClose();
 	}
 	
 	/**
@@ -87,8 +97,7 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public long getVolume(int daysAgo) throws IOException {
-		List<HistoricalQuote> quotes = getHistory(daysAgo, 1);
-		return quotes.get(0).getVolume();
+		return getDay(daysAgo).getVolume();
 	}
 	
 	/**
