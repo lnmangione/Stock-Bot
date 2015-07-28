@@ -13,8 +13,8 @@ import yahoofinance.histquotes.Interval;
 public class Symbol extends Stock {
 	
 	// Keep historical data that we have already pulled to speed up getHistory method
-	private List<HistoricalQuote> history;
-	private int lastDay = 0;
+	private List<HistoricalQuote> history = new ArrayList<>(0);
+	private int lastDay = -1;
 	
 	public Symbol(String symbol) throws IOException {
 		super(symbol);
@@ -40,14 +40,16 @@ public class Symbol extends Stock {
 		int newDay = 2 * fromDay;
 		
 		// Only get more historical data if we don't have enough stored
-		if (lastDay < newDay) {			
+		if (lastDay < newDay) {
 			Calendar from = Calendar.getInstance();
+			Calendar to = Calendar.getInstance();
 			
 			// Grab history of more days than necessary. We'll filter out what we don't need later
 			from.add(Calendar.DAY_OF_MONTH, -newDay);
+			to.add(Calendar.DAY_OF_MONTH, -lastDay - 1);
 
 			// Update list of historical data with new historical data
-			history = getHistory(from, Interval.DAILY);
+			history.addAll(getHistory(from, to, Interval.DAILY));
 			
 			// Update lastDay since we now have more information
 			lastDay = newDay;
