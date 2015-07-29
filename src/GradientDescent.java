@@ -8,10 +8,10 @@ import java.util.Arrays;
 public class GradientDescent {
 	
 	public static void main(String[] args) throws IOException {
-		Symbol symbol = new Symbol("LVS");
+		Symbol symbol = new Symbol("AAPL");
 		
 		int FUTURE_DAYS = 10;
-		int NUM_POINTS = 10;
+		int NUM_POINTS = 20;
 		int TEST_SET = 20;
 		
 		double[][] data = new double[NUM_POINTS][symbol.getFeatures(0).length];
@@ -26,9 +26,26 @@ public class GradientDescent {
 		
 		theta = getWeights(data, future, theta, .0001, 1000);
 		
-		int test = 3;
+		int test = 0;
 		System.out.println("Actual: " + future[test]);
-		System.out.println("Prediction: " + (theta[0] + (theta[1] * data[test][1])));
+		System.out.println("Prediction: " + calculate(theta, data)[test]);
+	}
+	
+	// first array of data in data, second is features
+	private static double[] calculate(double[] coef, double[][] data) {
+    	int NUM_DATA = data.length;
+    	int NUM_FEATURES = coef.length;
+		
+		double[] predictions = new double[NUM_DATA];
+    	
+    	for (int j = 0; j < NUM_DATA; j++) {
+    		// multiply each feature of data by its weight, sum, and then put in predictions
+    		for (int k = 0; k < NUM_FEATURES; k++) {
+    			predictions[j] += data[j][k] * coef[k];
+    		}
+    	}
+    	
+    	return predictions;
 	}
 	
     public static double[] getWeights(double[][] inputs, double[] outputs, double[] theta, double alpha, int numIters) {
@@ -37,14 +54,7 @@ public class GradientDescent {
         
         for (int i = 0; i < numIters; i++) {
         	// Calculate predictions
-        	double[] predictions = new double[m];
-        	
-        	for (int j = 0; j < m; j++) {
-        		// multiply each feature of data by its weight, sum, and then put in predictions
-        		for (int k = 0; k < numFeatures; k++) {
-        			predictions[j] += inputs[j][k] * theta[k];
-        		}
-        	}
+        	double[] predictions = calculate(theta, inputs);
         	
         	// Calculate error
         	double[] errorSums = new double[numFeatures];
