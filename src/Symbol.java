@@ -125,8 +125,7 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public double[] getFeatures(int daysAgo) throws IOException {
-		/*
-		int PAST_DAYS = 200;
+		int PAST_DAYS = 10;
 		
 		double[] features = new double[PAST_DAYS + 1];
 		
@@ -136,8 +135,8 @@ public class Symbol extends Stock {
 		for (int i = 0; i < PAST_DAYS; i++) {
 			features[i + 1] = getAdjClose(daysAgo + i).doubleValue();
 		}
-		*/
 		
+		/*
 		int NUM_FEATURES = 1;
 		
 		double[] features = new double[NUM_FEATURES + 1];
@@ -149,7 +148,7 @@ public class Symbol extends Stock {
 		// features[4] = (double)getVolume(daysAgo);
 		// Need function to get EPS
 		// Need function to get year high
-		
+		*/
 		
 		return features;
 		
