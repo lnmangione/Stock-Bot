@@ -33,9 +33,11 @@ public class Bot {
 		
 		Symbol[] trainingSet = getRandomStocks(5);
 
-		double[] weightsArray = RegressionAlgorithm.linearLearner(trainingSet, 10, 0.03);
-		RegressionAlgorithm.predictY(new Symbol("AAPL"), 10, weightsArray);
+		double[] weightsArray = RegressionAlgorithm.linearLearner(trainingSet, 10, 0.0001);
 		
+		Symbol appleSymbol = new Symbol("AAPL");
+		double prediction = RegressionAlgorithm.predictY(appleSymbol, 10, weightsArray);
+		System.out.print("Actual: " + appleSymbol.getPrice().doubleValue() + ", Predicted: " + prediction);
 
 		//sc.close();
 	}
