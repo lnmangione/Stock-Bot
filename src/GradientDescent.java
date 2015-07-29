@@ -6,27 +6,9 @@ import java.util.Arrays;
  * first dimension of inputs is the data point, second dimension is the feature number
  */
 public class GradientDescent {
-
-	public static void main(String[] args) throws IOException {
-		Symbol[] stocks = {new Symbol("AAPL")};
-		
-		int FUTURE_DAYS = 10;
-		int NUM_POINTS = 20;
-		int TEST_SET = 20;
-		
-		double[][] data = getData(stocks, NUM_POINTS, TEST_SET);
-		double[] future = getActual(stocks, NUM_POINTS, TEST_SET, FUTURE_DAYS);
-		double[] theta = new double[data[0].length];
-		
-		theta = train(data, future, theta, .0001, 1000);
-		
-		int test = 0;
-		System.out.println("Actual: " + future[test]);
-		System.out.println("Prediction: " + getPredictions(theta, data)[test]);
-	}
 	
 	// Get set of data with more recent data first
-	private static double[][] getData(Symbol[] stocks, int size, int daysAgo) throws IOException {
+	public static double[][] getData(Symbol[] stocks, int size, int daysAgo) throws IOException {
 		double[][] data = new double[size][stocks[0].getFeatures(0).length];
 		
 		for (Symbol stock : stocks) {
@@ -39,7 +21,7 @@ public class GradientDescent {
 	}
 	
 	// Get set of actuals with most recent acutals first
-	private static double[] getActual(Symbol[] stocks, int size, int daysAgo, int futureDays) throws IOException {
+	public static double[] getActual(Symbol[] stocks, int size, int daysAgo, int futureDays) throws IOException {
 		double[] actuals = new double[size];
 		
 		for (Symbol stock : stocks) {
@@ -52,7 +34,7 @@ public class GradientDescent {
 	}
 	
 	// first array of data in data, second is features
-	private static double[] getPredictions(double[] coef, double[][] data) {
+	public static double[] getPredictions(double[] coef, double[][] data) {
     	int NUM_DATA = data.length;
     	int NUM_FEATURES = coef.length;
 		
