@@ -6,6 +6,22 @@ import java.util.Arrays;
  * first dimension of inputs is the data point, second dimension is the feature number
  */
 public class GradientDescent {
+	public static double[] getMean(double[][] data) {
+		int numFeatures = data[0].length;
+		
+		double[] means = new double[numFeatures];
+		
+		// Sum the values for each feature
+		for (int i = 0; i < numFeatures; i++) {
+			for (double[] point : data) {
+				means[i] += point[i];
+			}
+			
+			means[i] /= data.length;
+		}
+		
+		return means;
+	}
 	
 	// Get set of data with more recent data first
 	public static double[][] getData(Symbol[] stocks, int size, int daysAgo) throws IOException {
