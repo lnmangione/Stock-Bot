@@ -125,13 +125,13 @@ public class Symbol extends Stock {
 	 * @throws IOException
 	 */
 	public double[] getFeatures(int daysAgo) throws IOException {
-		int NUM_FEATURES = 1;
+		int NUM_FEATURES = 2;
 		
 		double[] features = new double[NUM_FEATURES + 1];
 		
 		features[0] = 1.0;
 		features[1] = getAdjClose(daysAgo).doubleValue();
-		//features[2] = getMA(daysAgo, 50).doubleValue();
+		features[2] = getMA(daysAgo, 50).doubleValue();
 		//features[3] = getMA(daysAgo, 200).doubleValue();
 		//features[4] = (double)getVolume(daysAgo);
 		// Need function to get EPS
