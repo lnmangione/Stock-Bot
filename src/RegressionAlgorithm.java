@@ -20,8 +20,8 @@ public class RegressionAlgorithm {
 			weightsArray[i] = (double)0.0;
 		}
 
-		//Update weights 500 times
-		for (int i = 0; i < 500; i++){
+		//Update weights 100000 times
+		for (int i = 0; i < 10000; i++){
 			
 			double[] tempWeights = new double[numFeatures];
 
@@ -31,14 +31,6 @@ public class RegressionAlgorithm {
 				for (Symbol symbol: symbolsArray){
 					sum += (predictY(symbol, daysAgo, weightsArray) - symbol.getPrice().doubleValue()) * symbol.getFeatures(daysAgo)[feature];
 					System.out.print("Sum: " + sum + ", FVal: " + symbol.getFeatures(daysAgo)[feature] + "\n");
-				}
-				
-				//DEBUGGING
-				try {
-					Thread.sleep(5);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 				
 				System.out.print("\ntempWeights[" + feature+ "] = " + weightsArray[feature] + " - " + (learningRate / symbolsArray.length) * sum + ";\n");
