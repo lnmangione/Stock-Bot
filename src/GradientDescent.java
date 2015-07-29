@@ -89,11 +89,13 @@ public class GradientDescent {
 	
 	// Get set of actuals with most recent acutals first
 	public static double[] getActual(Symbol[] stocks, int size, int daysAgo, int futureDays) throws IOException {
-		double[] actuals = new double[size];
+		int numStocks = stocks.length;
 		
-		for (Symbol stock : stocks) {
-			for (int i = 0; i < size; i++) {
-				actuals[i] = stock.getAdjClose(i + daysAgo - futureDays).doubleValue();
+		double[] actuals = new double[numStocks * size];
+		
+		for (int i = 0; i < numStocks; i++) {
+			for (int j = 0; j < size; j++) {
+				actuals[(i * size) + j] = stocks[i].getAdjClose(j + daysAgo - futureDays).doubleValue();
 			}
 		}
 		
