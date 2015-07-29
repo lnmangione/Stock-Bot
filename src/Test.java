@@ -9,7 +9,7 @@ public class Test {
 	private Symbol[] testStocks;
 	
     public static void main(String[] args) throws IOException {
-    	Symbol[] stocks = {new Symbol("AAPL")};
+    	Symbol[] stocks = {new Symbol("AAPL"), new Symbol("LVS")};
     	
     	Test test = new Test(stocks, stocks);
     	test.test();
@@ -49,7 +49,7 @@ public class Test {
         
        //  System.out.println(Arrays.toString(theta));
 
-        for (int i = 0; i < NUM_POINTS; i++) {
+        for (int i = 0; i < testActual.length; i++) {
             System.out.println("Actual: " + testActual[i]);
             System.out.println("Prediction: " + GradientDescent.getPredictions(theta, test)[i]);
         }

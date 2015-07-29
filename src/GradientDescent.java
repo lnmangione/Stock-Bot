@@ -14,7 +14,6 @@ public class GradientDescent {
 		
 		for (int feature = 1; feature < numFeatures; feature ++){
 			for (int point = 0; point < data.length; point ++){
-				System.out.println(data[point][feature] - mean[feature]);
 				normalizedData[point][feature] = (data[point][feature] - mean[feature]) / stdDev[feature];
 			}
 		}
@@ -75,11 +74,13 @@ public class GradientDescent {
 	
 	// Get set of data with more recent data first
 	public static double[][] getData(Symbol[] stocks, int size, int daysAgo) throws IOException {
-		double[][] data = new double[size][stocks[0].getFeatures(0).length];
+		int numStocks = stocks.length;
 		
-		for (Symbol stock : stocks) {
-			for (int i = 0; i < size; i++) {
-				data[i] = stock.getFeatures(daysAgo + i);
+		double[][] data = new double[numStocks * size][stocks[0].getFeatures(0).length];
+		
+		for (int i = 0; i < numStocks; i++) {
+			for (int j = 0; j < size; j++) {
+				data[(i * size) + j] = stocks[i].getFeatures(j + daysAgo);
 			}
 		}
 		
