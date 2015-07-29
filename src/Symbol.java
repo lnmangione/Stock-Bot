@@ -133,7 +133,7 @@ public class Symbol extends Stock {
 		
 		// Add past days as features
 		for (int i = 0; i < PAST_DAYS; i++) {
-			features[i + 1] = getAdjCLose(daysAgo + i).doubleValue();
+			features[i + 1] = getAdjClose(daysAgo + i).doubleValue();
 		}
 		
 		/*
@@ -148,8 +148,10 @@ public class Symbol extends Stock {
 		// features[4] = (double)getVolume(daysAgo);
 		// Need function to get EPS
 		// Need function to get year high
+		*/
 		
 		return features;
+		
 	}
 	
 	public BigDecimal getPrice() {
