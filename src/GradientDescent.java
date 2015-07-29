@@ -11,16 +11,51 @@ public class GradientDescent {
 		
 		double[] means = new double[numFeatures];
 		
-		// Sum the values for each feature
+		// Calculate the mean
 		for (int i = 0; i < numFeatures; i++) {
+			// Sum the values for each feature
 			for (double[] point : data) {
 				means[i] += point[i];
 			}
 			
+			// Divide by the amount of data points
 			means[i] /= data.length;
 		}
 		
 		return means;
+	}
+	
+	private static double[] getVariance(double[][] data) {
+		int numFeatures = data[0].length;
+		
+		double[] variance = new double[numFeatures];
+		
+		double[] mean = getMean(data);
+		
+		// Calculate the variance for each feature
+		for (int i = 0; i < numFeatures; i++) {
+			// Sum the squares of the difference from mean
+			for (double[] point : data) {
+				variance[i] += Math.pow((point[i] - mean[i]), 2);
+			}
+			
+			// Divide by the amount of data points
+			variance[i] /= data.length;
+		}
+		
+		return variance;
+	}
+	
+	public static double[] getStdDev(double[][] data) {		
+		// Set the standard deviations to the variances
+		double[] StdDev = getVariance(data);
+		
+		// Now square root the variances
+		for (double variance : StdDev) {
+			variance = Math.sqrt(variance);
+		}
+		
+		return StdDev;
 	}
 	
 	// Get set of data with more recent data first
