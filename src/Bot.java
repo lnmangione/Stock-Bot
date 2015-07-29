@@ -1,19 +1,23 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Bot {
 	static final String ds = "$";
 	
 	public static void main(String[] args) throws IOException {
+		/*
 		Symbol symbol;
 		Scanner sc = new Scanner(System.in);
 		
-		/*
+		
 		// Get a stock symbol to check
 		System.out.print("Stock: ");
 		String stock = sc.next();
 		symbol = new Symbol(stock);
-		*/
+		
 
 		symbol = new Symbol("AAPL");
 
@@ -24,19 +28,50 @@ public class Bot {
 		System.out.println("Moving Average: " + symbol.getMA(0, 200));
 		System.out.println("Moving Average: " + symbol.getMA(0, 50));
 		// System.out.println("Closing Price: " + symbol.getAdjClose(30));
-
-		/*
-		Symbol[] trainingSet = new Symbol[5];
-		trainingSet[0] = new Symbol("^GSPC");
-		trainingSet[1] = new Symbol("GOOGL");
-		trainingSet[2] = new Symbol("ACE");
-		trainingSet[3] = new Symbol("HD");
-		trainingSet[4] = new Symbol("HP");
-
-		double[] weightsArray = RegressionAlgorithm.linearLearner(trainingSet, 7, 0.1);
-		RegressionAlgorithm.predictY(new Symbol("AAPL"), 10, weightsArray);
 		*/
 
-		sc.close();
+		
+		//Symbol[] trainingSet = getRandomStocks(5);
+		Symbol[] trainingSet = new Symbol[5];
+		trainingSet[0] = new Symbol("HD");
+		trainingSet[1] = new Symbol("HP");
+		trainingSet[2] = new Symbol("ABC");
+		trainingSet[3] = new Symbol("GOOGL");
+		trainingSet[4] = new Symbol("MMM");
+		
+		double[] weightsArray = RegressionAlgorithm.linearLearner(trainingSet, 10, 0.000001);
+		
+		Symbol appleSymbol = new Symbol("AAPL");
+		double prediction = RegressionAlgorithm.predictY(appleSymbol, 10, weightsArray);
+		System.out.print("Actual: " + appleSymbol.getPrice().doubleValue() + ", Predicted: " + prediction);
+
+		//sc.close();
+	}
+	
+	private static Symbol[] getRandomStocks(int num) throws IOException {
+		String fileName = "stocks.txt";
+		String line = null;
+		FileReader fileReader;
+		ArrayList<String> stocks = new ArrayList<String>();
+		Symbol[] randomStocks = new Symbol[num];
+
+		try { // Gets all stocks and adds them to ArrayList<String> stocks
+			fileReader = new FileReader(fileName);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				stocks.add(line);
+			}
+			bufferedReader.close();
+		} catch (Exception e) {}
+
+		int stocksSize = stocks.size();
+
+		//NOTE - This method may return duplicates
+		for (int f = 0; f < num; f++) { // Adds 30 random stocks to Symbol[]
+			// randomStocks
+			int random = (int) (Math.random() * (stocksSize));
+			randomStocks[f] = new Symbol(stocks.remove(random));
+		}
+		return randomStocks;
 	}
 }
