@@ -15,13 +15,8 @@ public class GradientDescent {
 		int TEST_SET = 20;
 		
 		double[][] data = getData(stocks, NUM_POINTS, TEST_SET);
-		double[] future = new double[NUM_POINTS];
+		double[] future = getActual(stocks, NUM_POINTS, TEST_SET, FUTURE_DAYS);
 		double[] theta = new double[data[0].length];
-		
-		// Add future price to outputs
-		for (int i = 0; i < NUM_POINTS; i++) {
-			future[i] = symbol.getAdjClose(i + TEST_SET - FUTURE_DAYS).doubleValue();
-		}
 		
 		theta = train(data, future, theta, .0001, 1000);
 		
@@ -43,7 +38,18 @@ public class GradientDescent {
 		return data;
 	}
 	
-	// TODO Get set of actuals
+	// Get set of actuals with most recent acutals first
+	private static double[] getActual(Symbol[] stocks, int size, int daysAgo, int futureDays) throws IOException {
+		double[] actuals = new double[size];
+		
+		for (Symbol stock : stocks) {
+			for (int i = 0; i < size; i++) {
+				actuals[i] = stock.getAdjClose(i + daysAgo - futureDays).doubleValue();
+			}
+		}
+		
+		return actuals;
+	}
 	
 	// first array of data in data, second is features
 	private static double[] getPredictions(double[] coef, double[][] data) {
