@@ -6,6 +6,13 @@ import java.util.Arrays;
  * first dimension of inputs is the data point, second dimension is the feature number
  */
 public class GradientDescent {
+	private double[][] trainingData;
+	private double[][] testData;
+	
+	public GradientDescent(double[][] trainingData, double[][] testData) {
+		this.trainingData = trainingData;
+		this.testData = testData;
+	}
 	
 	public static void main(String[] args) throws IOException {
 		Symbol symbol = new Symbol("AAPL");
