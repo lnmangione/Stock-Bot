@@ -6,16 +6,15 @@ import java.util.Arrays;
  * first dimension of inputs is the data point, second dimension is the feature number
  */
 public class GradientDescent {
-	public static double[][] normalizeData(double[][] data){
+	public static double[][] normalize(double[][] data, double[] mean, double[] stdDev){
 		double[][] normalizedData = data;
 		
 		//Get mean, stdDev, etc for normalization calculations
 		int numFeatures = data[0].length;
-		double[] mean = getMean(data);
-		double[] stdDev = getStdDev(data);
 		
 		for (int feature = 1; feature < numFeatures; feature ++){
 			for (int point = 0; point < data.length; point ++){
+				System.out.println(data[point][feature] - mean[feature]);
 				normalizedData[point][feature] = (data[point][feature] - mean[feature]) / stdDev[feature];
 			}
 		}
