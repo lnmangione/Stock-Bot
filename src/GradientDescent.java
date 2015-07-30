@@ -113,36 +113,6 @@ public class GradientDescent {
 
 		return StdDev;
 	}
-
-	// Get set of data with more recent data first
-	public static double[][] getData(Symbol[] stocks, int size, int daysAgo) throws IOException {
-		int numStocks = stocks.length;
-		
-		double[][] data = new double[numStocks * size][stocks[0].getFeatures(0).length];
-		
-		for (int i = 0; i < numStocks; i++) {
-			for (int j = 0; j < size; j++) {
-				data[(i * size) + j] = stocks[i].getFeatures(j + daysAgo);
-			}
-		}
-		
-		return data;
-	}
-	
-	// Get set of actuals with most recent acutals first
-	public static double[] getActual(Symbol[] stocks, int size, int daysAgo, int futureDays) throws IOException {
-		int numStocks = stocks.length;
-		
-		double[] actuals = new double[numStocks * size];
-		
-		for (int i = 0; i < numStocks; i++) {
-			for (int j = 0; j < size; j++) {
-				actuals[(i * size) + j] = stocks[i].getAdjClose(j + daysAgo - futureDays).doubleValue();
-			}
-		}
-		
-		return actuals;
-	}
 	
 	// first array of data in data, second is features
 	public static double[] getPredictions(double[] coef, double[][] data, double mean, double stdDev) {
