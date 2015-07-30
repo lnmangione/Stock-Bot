@@ -8,6 +8,9 @@ public class Bot {
 	static final String ds = "$";
 	
 	public static void main(String[] args) throws IOException {
+		Symbol stock = new Symbol("AAPL");
+		
+		System.out.println(stock.getHistory(10, 1000));
 	}
 	
 	private static Symbol[] getRandomStocks(int num) throws IOException {
