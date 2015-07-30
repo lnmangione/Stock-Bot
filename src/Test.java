@@ -63,8 +63,8 @@ public class Test {
 
         theta = GradientDescent.train(train, trainActual, theta, .4, 10000000);
 
-        System.out.println(Arrays.toString(theta));
-        System.out.println("Cost (Try to minimize): " + getCost(train, trainActual, theta));
+        // System.out.println(Arrays.toString(theta));
+        // System.out.println("Cost (Try to minimize): " + getCost(train, trainActual, theta));
 
         for (int i = 0; i < testActual.length; i++) {
             System.out.println("Actual: " + testActual[i]);
