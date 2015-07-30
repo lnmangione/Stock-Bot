@@ -6,20 +6,51 @@ import java.util.Arrays;
  * first dimension of inputs is the data point, second dimension is the feature number
  */
 public class GradientDescent {
-	public static double[] normalize(double[] data, double mean, double stdDev){
+    private Features features;
+    
+    double[][] train;
+    double[] trainActual;
+    
+    private double[] mean;
+    private double[] stdDev;
+    private double actualMean;
+    private double actualStdDev;
+    
+    public GradientDescent(Symbol[] trainStocks, int NUM_POINTS, int DAYS_BACK, int FUTURE_DAYS) throws IOException {
+    	features = new Features();
+    	
+    	 train = getData(trainStocks, NUM_POINTS, DAYS_BACK);
+         trainActual = getActual(trainStocks, NUM_POINTS, DAYS_BACK, FUTURE_DAYS);
+         
+         // Get data mean and standard deviation
+         mean = getMean(train);
+         stdDev = getStdDev(train);
+         
+         // Normalize training data
+         train = normalize(train);
+
+         // Get actual mean and standard deviation
+         actualMean = getMean(trainActual);
+         actualStdDev = getStdDev(trainActual);
+
+         // Normalize training actuals
+         trainActual = normalize(trainActual);
+    }
+    
+	public double[] normalize(double[] data){
 		double[] normalizedData = data;
 
 		//Get mean, stdDev, etc for normalization calculations
 		int size = data.length;
 
 		for (int i = 0; i < size; i++){
-			normalizedData[i] = (data[i] - mean) / stdDev;
+			normalizedData[i] = (data[i] - actualMean) / actualStdDev;
 		}
 
 		return normalizedData;
 	}
 
-	public static double[][] normalize(double[][] data, double[] mean, double[] stdDev){
+	public double[][] normalize(double[][] data){
 		double[][] normalizedData = data;
 		
 		//Get mean, stdDev, etc for normalization calculations
@@ -114,8 +145,38 @@ public class GradientDescent {
 		return StdDev;
 	}
 	
+	// Get set of data with more recent data first
+   public double[][] getData(Symbol[] stocks, int size, int daysAgo) throws IOException {
+        int numStocks = stocks.length;
+
+        double[][] data = new double[numStocks * size][features.getFeatures(stocks[0], 0).length];
+
+        for (int i = 0; i < numStocks; i++) {
+            for (int j = 0; j < size; j++) {
+                data[(i * size) + j] = features.getFeatures(stocks[i], j + daysAgo);
+            }
+        }
+
+        return data;
+    }
+
+    // Get set of actuals with most recent actuals first
+    public static double[] getActual(Symbol[] stocks, int size, int daysAgo, int futureDays) throws IOException {
+        int numStocks = stocks.length;
+
+        double[] actuals = new double[numStocks * size];
+
+        for (int i = 0; i < numStocks; i++) {
+            for (int j = 0; j < size; j++) {
+                actuals[(i * size) + j] = stocks[i].getAdjClose(j + daysAgo - futureDays).doubleValue();
+            }
+        }
+
+        return actuals;
+    }
+	
 	// first array of data in data, second is features
-	public static double[] getPredictions(double[] coef, double[][] data, double mean, double stdDev) {
+	private static double[] getPredictions(double[] coef, double[][] data, double mean, double stdDev) {
     	int NUM_DATA = data.length;
     	int NUM_FEATURES = coef.length;
 		
@@ -135,20 +196,40 @@ public class GradientDescent {
     	return predictions;
 	}
 	
-    public static double[] train(double[][] inputs, double[] outputs, double[] theta, double alpha, int numIters) {
-        int m = outputs.length;
-        int numFeatures = inputs[0].length;
+	public double[] getPredictions(double[] coef, double[][] data) {
+		return getPredictions(coef, data, actualMean, actualStdDev);
+	}
+	
+	public double getCost(double[] theta) {
+        int size = trainActual.length;
+
+        double[] predictions = getPredictions(theta, train, 0, 1);
+
+        double sumErrors = 0;
+
+        for (int i = 0; i < size; i++) {
+            sumErrors += Math.pow(predictions[i] - trainActual[i], 2);
+        }
+
+        return (1.0 / (2 * size)) * sumErrors;
+    }
+	
+    public double[] train(double alpha, int numIters) {
+    	double[] theta = new double[train[0].length];
+    	
+    	int m = trainActual.length;
+        int numFeatures = train[0].length;
         
         for (int i = 0; i < numIters; i++) {
         	// Calculate predictions
-        	double[] predictions = getPredictions(theta, inputs, 0.0, 1.0);
+        	double[] predictions = getPredictions(theta, train, 0.0, 1.0);
         	
         	// Calculate error
         	double[] errorSums = new double[numFeatures];
         	
         	for (int j = 0; j < numFeatures; j++) {
         		for (int k = 0; k < m; k++) {
-        			errorSums[j] += (predictions[k] - outputs[k]) * inputs[k][j];
+        			errorSums[j] += (predictions[k] - trainActual[k]) * train[k][j];
         		}
         	}
         	
