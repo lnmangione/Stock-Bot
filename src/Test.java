@@ -6,7 +6,7 @@ import java.util.Arrays;
  */
 public class Test {	
     public static void main(String[] args) throws IOException {
-    	Symbol[] stocks = {new Symbol("AAPL"), new Symbol("LVS"), new Symbol("GOOG")};
+    	Symbol[] stocks = {new Symbol("AAPL"), new Symbol("LVS")};
     	
     	test(stocks, stocks);
     }
@@ -27,12 +27,12 @@ public class Test {
 
 
         // Train
-        double[] theta = gd.train(.4, 10000000);
+        double[] theta = gd.train(2.0, 10000000);
 
         
         // Show predictions
         System.out.println(Arrays.toString(theta));
-        // System.out.println("Cost (Try to minimize): " + gd.getCost(theta));
+        System.out.println("Cost (Try to minimize): " + gd.getCost(theta));
 
         for (int i = 0; i < testActual.length; i++) {
             System.out.println("Actual: " + testActual[i]);

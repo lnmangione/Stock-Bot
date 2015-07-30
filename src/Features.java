@@ -29,7 +29,7 @@ public class Features {
     }
 
     public double[] getFeatures(Symbol stock, int daysAgo) throws IOException {
-        double[] features = new double[PAST_DAYS + PAST_DAYS + 1];
+        double[] features = new double[PAST_DAYS + PAST_DAYS + 1 + 2];
 
         features[0] = 1.0;
 
@@ -42,6 +42,9 @@ public class Features {
         for (int i = 0; i < PAST_DAYS; i++) {
             features[i + PAST_DAYS + 1] = getSP500((i * SPREAD) + daysAgo);
         }
+        
+        features[features.length - 2] = stock.getMA(daysAgo, 50).doubleValue();
+        features[features.length - 1] = stock.getMA(daysAgo, 200).doubleValue();
 
         return features;
     }
