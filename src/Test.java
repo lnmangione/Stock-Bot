@@ -12,10 +12,12 @@ public class Test {
     }
 
     private static void test(Symbol[] trainStocks, Symbol[] testStocks) throws IOException {
+    	
         int FUTURE_DAYS = 10;
         int NUM_POINTS = 30;
         int DAYS_BACK = NUM_POINTS + FUTURE_DAYS + 1;
         
+        /*
         GradientDescent gd = new GradientDescent(trainStocks, NUM_POINTS, DAYS_BACK, FUTURE_DAYS);
 
         // Get test data
@@ -38,17 +40,23 @@ public class Test {
             System.out.println("Actual: " + testActual[i]);
 			System.out.println("Prediction: " + gd.getPredictions(theta, test)[i]);
         }
+        */
         
-        Symbol[] promiseTest = {new Symbol("F"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS")};
-        getPromisingStocks(promiseTest, theta, mean, stdDev, actualMean, actualStdDev, DAYS_BACK + 1, 0.3);
+    	Symbol[] promiseTest = {new Symbol("F"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS")};
+        getPromisingStocks(promiseTest, DAYS_BACK + 1, FUTURE_DAYS, 0.3);
 
     }
     
-    public Symbol[] getPromisingStocks(Symbol[] symbols, double[] weights, double[] dataMean, double[] dataStdDev, double actualMean, double actualStdDev, int startDaysAgo, double diversity) throws IOException {
+    public static Symbol[] getPromisingStocks(Symbol[] symbols, int startDaysAgo, int futureDays, double diversity) throws IOException {   	
+    	GradientDescent gd = new GradientDescent(symbols, 30, startDaysAgo, futureDays);
+    	
+    	double[] weights = gd.train(1.0, 1000000);
+    
+    	
     	//Get price predictions for symbols
-    	double[][] data = getData(symbols, 1, startDaysAgo);
-    	data = GradientDescent.normalize(data, dataMean, dataStdDev);
-    	double[] predictedValues = GradientDescent.getPredictions(weights, data, actualMean, actualStdDev);
+    	double[][] data = gd.getData(symbols, 1, startDaysAgo);
+    	data = gd.normalize(data);
+    	double[] predictedValues = gd.getPredictions(weights, data);
     	
 		double[] priceRatios = new double[predictedValues.length];
 		for (int i = 0; i < symbols.length; i++){
