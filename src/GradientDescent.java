@@ -196,8 +196,8 @@ public class GradientDescent {
     	return predictions;
 	}
 	
-	public double[] getPredictions(double[] coef, double[][] data) {
-		return getPredictions(coef, data, actualMean, actualStdDev);
+	public static double[] getPredictions(double[] coef, double[][] data) {
+		return getPredictions(coef, data);
 	}
 	
 	public double getCost(double[] theta) {
