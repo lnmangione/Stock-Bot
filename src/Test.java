@@ -9,6 +9,8 @@ import java.util.Arrays;
 public class Test {
 	private Symbol[] trainStocks;
 	private Symbol[] testStocks;
+
+    private Features features;
 	
     public static void main(String[] args) throws IOException {
     	Symbol[] stocks = {new Symbol("AAPL"), new Symbol("LVS"), new Symbol("GOOG")};
@@ -17,8 +19,10 @@ public class Test {
     	test.test();
     }
     
-    public Test (Symbol[] trainStocks, Symbol[] testStocks) {
-    	this.trainStocks = trainStocks;
+    public Test (Symbol[] trainStocks, Symbol[] testStocks) throws IOException{
+        features = new Features();
+
+        this.trainStocks = trainStocks;
     	this.testStocks = testStocks;
     }
 
@@ -83,14 +87,14 @@ public class Test {
     }
 
     // Get set of data with more recent data first
-    public static double[][] getData(Symbol[] stocks, int size, int daysAgo) throws IOException {
+    public double[][] getData(Symbol[] stocks, int size, int daysAgo) throws IOException {
         int numStocks = stocks.length;
 
-        double[][] data = new double[numStocks * size][stocks[0].getFeatures(0).length];
+        double[][] data = new double[numStocks * size][features.getFeatures(stocks[0], 0).length];
 
         for (int i = 0; i < numStocks; i++) {
             for (int j = 0; j < size; j++) {
-                data[(i * size) + j] = stocks[i].getFeatures(j + daysAgo);
+                data[(i * size) + j] = features.getFeatures(stocks[i], j + daysAgo);
             }
         }
 
@@ -98,7 +102,7 @@ public class Test {
     }
 
     // Get set of actuals with most recent acutals first
-    public static double[] getActual(Symbol[] stocks, int size, int daysAgo, int futureDays) throws IOException {
+    public double[] getActual(Symbol[] stocks, int size, int daysAgo, int futureDays) throws IOException {
         int numStocks = stocks.length;
 
         double[] actuals = new double[numStocks * size];

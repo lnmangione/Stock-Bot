@@ -117,43 +117,6 @@ public class Symbol extends Stock {
 		return ma;
 	}
 	
-	/**
-	 * Returns an array containing different features to use in a stock prediction
-	 * @author Michael Bick
-	 * @param daysAgo amount of days ago to get the features from
-	 * @return array containing features
-	 * @throws IOException
-	 */
-	public double[] getFeatures(int daysAgo) throws IOException {
-		int PAST_DAYS = 4;
-		
-		double[] features = new double[PAST_DAYS + 1];
-		
-		features[0] = 1.0;
-		
-		// Add past days as features
-		for (int i = 0; i < PAST_DAYS; i++) {
-			features[i + 1] = getAdjClose((i * 10) + daysAgo).doubleValue();
-		}
-		
-		/*
-		int NUM_FEATURES = 1;
-		
-		double[] features = new double[NUM_FEATURES + 1];
-		
-		features[0] = 1.0;
-		features[1] = getAdjClose(daysAgo).doubleValue();
-		// features[2] = getMA(daysAgo, 50).doubleValue();
-		// features[3] = getMA(daysAgo, 200).doubleValue();
-		// features[4] = (double)getVolume(daysAgo);
-		// Need function to get EPS
-		// Need function to get year high
-		*/
-		
-		return features;
-		
-	}
-	
 	public BigDecimal getPrice() {
 		return getQuote().getPrice();
 	}
