@@ -21,7 +21,7 @@ public class Test {
     }
 
     private void test() throws IOException {
-        int FUTURE_DAYS = 10;
+        int FUTURE_DAYS = 1;
         int NUM_POINTS = 20;
         int DAYS_BACK = 100;
 
@@ -55,13 +55,13 @@ public class Test {
         // Train
         double[] theta = new double[train[0].length];
 
-        theta = GradientDescent.train(train, trainActual, theta, .0001, 1000);
+        theta = GradientDescent.train(train, trainActual, theta, .1, 5000);
 
         System.out.println(Arrays.toString(theta));
 
         for (int i = 0; i < testActual.length; i++) {
             System.out.println("Actual: " + testActual[i]);
-            System.out.println("Prediction: " + GradientDescent.getPredictions(theta, test)[i]);
+            System.out.println("Prediction: " + GradientDescent.getPredictions(theta, test, actualMean, actualStdDev)[i]);
         }
     }
 }

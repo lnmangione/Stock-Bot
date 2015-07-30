@@ -145,18 +145,22 @@ public class GradientDescent {
 	}
 	
 	// first array of data in data, second is features
-	public static double[] getPredictions(double[] coef, double[][] data) {
+	public static double[] getPredictions(double[] coef, double[][] data, double mean, double stdDev) {
     	int NUM_DATA = data.length;
     	int NUM_FEATURES = coef.length;
 		
 		double[] predictions = new double[NUM_DATA];
     	
     	for (int j = 0; j < NUM_DATA; j++) {
-    		// multiply each feature of data by its weight, sum, and then put in predictions
-    		for (int k = 0; k < NUM_FEATURES; k++) {
-    			predictions[j] += data[j][k] * coef[k];
-    		}
-    	}
+			// multiply each feature of data by its weight, sum, and then put in predictions
+			for (int k = 0; k < NUM_FEATURES; k++) {
+				// Calculate prediction using linear regression function
+				predictions[j] += data[j][k] * coef[k];
+			}
+
+			// Un-normalize the prediction
+			predictions[j] = (predictions[j] * stdDev) + mean;
+		}
     	
     	return predictions;
 	}
@@ -167,7 +171,7 @@ public class GradientDescent {
         
         for (int i = 0; i < numIters; i++) {
         	// Calculate predictions
-        	double[] predictions = getPredictions(theta, inputs);
+        	double[] predictions = getPredictions(theta, inputs, 0.0, 1.0);
         	
         	// Calculate error
         	double[] errorSums = new double[numFeatures];
