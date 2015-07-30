@@ -2,15 +2,21 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.List;
+
+import yahoofinance.histquotes.HistoricalQuote;
 
 public class Bot {
 	static final String ds = "$";
 	
 	public static void main(String[] args) throws IOException {
-		Symbol stock = new Symbol("AAPL");
+		Symbol stock = new Symbol("GOOG");
 		
-		System.out.println(stock.getHistory(10, 1000));
+		List<HistoricalQuote> history = stock.getHistory(10, 1000);
+		
+		for (HistoricalQuote quote : history) {
+			System.out.println(quote.getAdjClose());
+		}
 	}
 	
 	private static Symbol[] getRandomStocks(int num) throws IOException {

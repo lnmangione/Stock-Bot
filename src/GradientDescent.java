@@ -238,6 +238,7 @@ public class GradientDescent {
         	}
         	
         	// System.out.println(Arrays.toString(theta));
+        	// System.out.println(getCost(theta));
         }
         
         return theta;
