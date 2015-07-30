@@ -1,5 +1,3 @@
-import com.sun.prism.paint.Gradient;
-
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -70,6 +68,9 @@ public class Test {
             System.out.println("Actual: " + testActual[i]);
             System.out.println("Prediction: " + GradientDescent.getPredictions(theta, test, actualMean, actualStdDev)[i]);
         }
+        
+        Symbol[] promiseTest = {new Symbol("F"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS")};
+        getPromisingStocks(promiseTest, theta, mean, stdDev, actualMean, actualStdDev, DAYS_BACK + 1, 0.3);
     }
 
     private static double getCost(double[][] data, double[] actual, double[] theta) {
@@ -115,4 +116,50 @@ public class Test {
 
         return actuals;
     }
+    
+    public Symbol[] getPromisingStocks(Symbol[] symbols, double[] weights, double[] dataMean, double[] dataStdDev, double actualMean, double actualStdDev, int startDaysAgo, double diversity) throws IOException {
+    	//Get price predictions for symbols
+    	double[][] data = getData(symbols, 1, startDaysAgo);
+    	data = GradientDescent.normalize(data, dataMean, dataStdDev);
+    	double[] predictedValues = GradientDescent.getPredictions(weights, data, actualMean, actualStdDev);
+    	
+		double[] priceRatios = new double[predictedValues.length];
+		for (int i = 0; i < symbols.length; i++){
+			//We wouldn't necessarily be selling the stock at the exact closing price, but its our best estimation to selling price
+			priceRatios[i] = predictedValues[i] / symbols[i].getAdjClose(startDaysAgo).doubleValue();
+		}
+		
+		//Rank sell/buy ratios
+		int[] rankedRatioIndices = new int[priceRatios.length];
+		double[] tempRatios = new double[priceRatios.length];
+		
+		//Java was passing by value, so I had to manually copy values into the temporary array
+		for (int i = 0; i < priceRatios.length; i++){
+			tempRatios[i] = priceRatios[i];
+		}
+		
+		for (int i = 0; i < tempRatios.length; i++){
+			double max = 0.0;
+			int indexOfMax = 0;
+			for (int a = 0; a < tempRatios.length; a++){
+				if (tempRatios[a] > max){
+					max = tempRatios[a];
+					indexOfMax = a;
+				}
+			}
+			
+			tempRatios[indexOfMax] = 0.0;
+			rankedRatioIndices[i] = indexOfMax;
+		}
+		
+		//Now rankedRatioIndices stores the indices of promising stocks
+		//Only take certain percentage of most promising stocks using diversity value
+		int numPromising = (int)(diversity * (double)symbols.length + 0.5);
+		Symbol[] promisingStocks = new Symbol[numPromising];
+		for (int i = 0; i < numPromising; i++){
+			promisingStocks[i] = symbols[rankedRatioIndices[i]];
+		}
+		
+		return promisingStocks;
+	}
 }
