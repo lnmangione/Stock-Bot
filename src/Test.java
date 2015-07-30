@@ -6,9 +6,16 @@ import java.util.Arrays;
  */
 public class Test {	
     public static void main(String[] args) throws IOException {
+    	int FUTURE_DAYS = 10;
+        int NUM_POINTS = 30;
+        int DAYS_BACK = NUM_POINTS + FUTURE_DAYS + 1;
+    	
     	Symbol[] stocks = {new Symbol("AAPL"), new Symbol("LVS")};
     	
-    	test(stocks, stocks);
+    	// test(stocks, stocks);
+    	
+    	Symbol[] promiseTest = {new Symbol("F"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS")};
+        getPromisingStocks(promiseTest, DAYS_BACK + 1, FUTURE_DAYS, 0.3);
     }
 
     private static void test(Symbol[] trainStocks, Symbol[] testStocks) throws IOException {
@@ -17,7 +24,6 @@ public class Test {
         int NUM_POINTS = 30;
         int DAYS_BACK = NUM_POINTS + FUTURE_DAYS + 1;
         
-        /*
         GradientDescent gd = new GradientDescent(trainStocks, NUM_POINTS, DAYS_BACK, FUTURE_DAYS);
 
         // Get test data
@@ -40,11 +46,6 @@ public class Test {
             System.out.println("Actual: " + testActual[i]);
 			System.out.println("Prediction: " + gd.getPredictions(theta, test)[i]);
         }
-        */
-        
-    	Symbol[] promiseTest = {new Symbol("F"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS")};
-        getPromisingStocks(promiseTest, DAYS_BACK + 1, FUTURE_DAYS, 0.3);
-
     }
     
     public static Symbol[] getPromisingStocks(Symbol[] symbols, int startDaysAgo, int futureDays, double diversity) throws IOException {   	
