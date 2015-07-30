@@ -33,8 +33,16 @@ public class Test {
         double[] mean = GradientDescent.getMean(train);
         double[] stdDev = GradientDescent.getStdDev(train);
         
-        // Normalized training data
+        // Normalize training data
         train = GradientDescent.normalize(train, mean, stdDev);
+
+        // Get actual mean and standard deviation
+        double actualMean = GradientDescent.getMean(trainActual);
+        double actualStdDev = GradientDescent.getStdDev(trainActual);
+
+        // Normalize training actuals
+        trainActual = GradientDescent.normalize(trainActual, actualMean, actualStdDev);
+
 
         // Get test data
         double[][] test = GradientDescent.getData(testStocks, NUM_POINTS, DAYS_BACK + NUM_POINTS);
@@ -43,11 +51,13 @@ public class Test {
         // Normalize test data using training mean and standard deviation
         test = GradientDescent.normalize(test, mean, stdDev);
 
+
+        // Train
         double[] theta = new double[train[0].length];
 
-        theta = GradientDescent.train(train, trainActual, theta, .01, 1000);
-        
-       //  System.out.println(Arrays.toString(theta));
+        theta = GradientDescent.train(train, trainActual, theta, .0001, 1000);
+
+        System.out.println(Arrays.toString(theta));
 
         for (int i = 0; i < testActual.length; i++) {
             System.out.println("Actual: " + testActual[i]);

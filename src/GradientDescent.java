@@ -6,6 +6,19 @@ import java.util.Arrays;
  * first dimension of inputs is the data point, second dimension is the feature number
  */
 public class GradientDescent {
+	public static double[] normalize(double[] data, double mean, double stdDev){
+		double[] normalizedData = data;
+
+		//Get mean, stdDev, etc for normalization calculations
+		int size = data.length;
+
+		for (int i = 0; i < size; i++){
+			normalizedData[i] = (data[i] - mean) / stdDev;
+		}
+
+		return normalizedData;
+	}
+
 	public static double[][] normalize(double[][] data, double[] mean, double[] stdDev){
 		double[][] normalizedData = data;
 		
@@ -18,6 +31,17 @@ public class GradientDescent {
 			}
 		}
 		return normalizedData; 
+	}
+
+	public static double getMean(double[] data) {
+		double sum = 0;
+
+		// Calculate the mean
+		for (double point : data) {
+			sum += point;
+		}
+
+		return sum / data.length;
 	}
 	
 	public static double[] getMean(double[][] data) {
@@ -38,7 +62,21 @@ public class GradientDescent {
 		
 		return means;
 	}
-	
+
+	private static double getVariance(double[] data) {
+		double variance = 0;
+
+		double mean = getMean(data);
+
+		for (double point : data) {
+			variance += Math.pow(point - mean, 2);
+		}
+
+		variance /= data.length;
+
+		return variance;
+	}
+
 	private static double[] getVariance(double[][] data) {
 		int numFeatures = data[0].length;
 		
@@ -59,19 +97,23 @@ public class GradientDescent {
 		
 		return variance;
 	}
-	
-	public static double[] getStdDev(double[][] data) {		
+
+	public static double getStdDev(double[] data) {
+		return Math.sqrt(getVariance(data));
+	}
+
+	public static double[] getStdDev(double[][] data) {
 		// Set the standard deviations to the variances
 		double[] StdDev = getVariance(data);
-		
+
 		// Now square root the variances
 		for (double variance : StdDev) {
 			variance = Math.sqrt(variance);
 		}
-		
+
 		return StdDev;
 	}
-	
+
 	// Get set of data with more recent data first
 	public static double[][] getData(Symbol[] stocks, int size, int daysAgo) throws IOException {
 		int numStocks = stocks.length;
