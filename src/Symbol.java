@@ -105,32 +105,4 @@ public class Symbol extends Stock {
 		
 		return ma;
 	}
-	
-	public BigDecimal getPrice() {
-		return getQuote().getPrice();
-	}
-	/*
-	public BigDecimal getDayHigh() {
-		return getQuote().getDayHigh();
-	}
-	
-	public BigDecimal getDayLow() {
-		return getQuote().getDayLow();
-	}
-	public BigDecimal getFtWkHigh(){
-		return getQuote().getYearHigh();
-	}
-	public BigDecimal getFtWkLow(){
-		return getQuote().getYearLow();
-	}
-	public BigDecimal getEPS() {
-		return getStats().getEps();
-	}
-	public long getNumberOfShares() {
-		return getStats().getSharesOutstanding();
-	}
-	public long getVolume() {
-		return getQuote().getVolume();
-	}
-	*/
 }

@@ -7,7 +7,7 @@ import java.util.Arrays;
 public class Test {	
     public static void main(String[] args) throws IOException {
     	Symbol[] stocks = {new Symbol("AAL"), new Symbol("T"), new Symbol("ADSK"), new Symbol("BAC"), new Symbol("BA"), new Symbol("KO"), new Symbol("EBAY"), new Symbol("XOM"), new Symbol("F"), new Symbol("GWW"), new Symbol("HAS"), new Symbol("ORCL"), new Symbol("FDX")};
-    	
+
     	test(stocks, stocks);
 
         /*
@@ -38,7 +38,6 @@ public class Test {
         
         // Show predictions
         Features.print(theta);
-        System.out.println("Cost (Try to minimize): " + gd.getCost(theta));
 
         for (int i = 0; i < testActual.length; i++) {
             System.out.println("Actual: " + testActual[i]);
