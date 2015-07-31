@@ -12,9 +12,10 @@ import yahoofinance.histquotes.Interval;
 
 public class Symbol extends Stock {
 	
+	private final int DAYS_HISTORY = 2000;
+	
 	// Keep historical data that we have already pulled to speed up getHistory method
 	private List<HistoricalQuote> history = new ArrayList<>(0);
-	private int lastDay = -1;
 	
 	public Symbol(String symbol) throws IOException {
 		super(symbol);
@@ -22,6 +23,13 @@ public class Symbol extends Stock {
 		setQuote(stock.getQuote());
 		setStats(stock.getStats());
 		setDividend(stock.getDividend());
+		
+		// Set history
+		Calendar from = Calendar.getInstance();
+		from.add(Calendar.DAY_OF_MONTH, -DAYS_HISTORY);
+
+		// Update list of historical data with new historical data
+		history = getHistory(from, Interval.DAILY);
 	}
 	
 	/**
@@ -32,29 +40,10 @@ public class Symbol extends Stock {
 	 * @return list of historical quotes from time period
 	 * @throws IOException
 	 */
-	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {
-		
+	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {		
 		// Create an integer to hold the farthest back day requested
 		int fromDay = daysAgo + days;
-		// Create an integer to hold what the new last day will be
-		int newDay = 2 * fromDay;
-		
-		// Only get more historical data if we don't have enough stored
-		if (lastDay < newDay) {
-			Calendar from = Calendar.getInstance();
-			Calendar to = Calendar.getInstance();
-			
-			// Grab history of more days than necessary. We'll filter out what we don't need later
-			from.add(Calendar.DAY_OF_MONTH, -newDay);
-			to.add(Calendar.DAY_OF_MONTH, -lastDay - 1);
 
-			// Update list of historical data with new historical data
-			history.addAll(getHistory(from, to, Interval.DAILY));
-			
-			// Update lastDay since we now have more information
-			lastDay = newDay;
-		}
-		
 		// Filter the list down to what we need
 		// Only subtract 1 from first parameter because it is inclusive
 		return history.subList(daysAgo, fromDay);
@@ -115,43 +104,6 @@ public class Symbol extends Stock {
 		ma = ma.divide(new BigDecimal(quotes.size()), 2, RoundingMode.HALF_UP); // Rounds the "regular" way to 2 decimal places
 		
 		return ma;
-	}
-	
-	/**
-	 * Returns an array containing different features to use in a stock prediction
-	 * @author Michael Bick
-	 * @param daysAgo amount of days ago to get the features from
-	 * @return array containing features
-	 * @throws IOException
-	 */
-	public double[] getFeatures(int daysAgo) throws IOException {
-		int PAST_DAYS = 200;
-		
-		double[] features = new double[PAST_DAYS + 1];
-		
-		features[0] = 1.0;
-		
-		// Add past days as features
-		for (int i = 0; i < PAST_DAYS; i++) {
-			features[i + 1] = getAdjCLose(daysAgo + i).doubleValue();
-		}
-		
-		/*
-		int NUM_FEATURES = 2;
-		
-		double[] features = new double[NUM_FEATURES + 1];
-		
-		features[0] = 1.0;
-		features[1] = getAdjClose(daysAgo).doubleValue();
-		features[2] = getMA(daysAgo, 50).doubleValue();
-		// features[3] = getMA(daysAgo, 200).doubleValue();
-		// features[4] = (double)getVolume(daysAgo);
-		// TODO function to get EPS
-		// TODO function to get year high
-		*/
-		
-		
-		return features;
 	}
 	
 	public BigDecimal getPrice() {
