@@ -8,12 +8,15 @@ public class Test {
     public static void main(String[] args) throws IOException {
     	Symbol[] stocks = {new Symbol("AAL"), new Symbol("T"), new Symbol("ADSK"), new Symbol("BAC"), new Symbol("BA"), new Symbol("KO"), new Symbol("EBAY"), new Symbol("XOM"), new Symbol("F"), new Symbol("GWW"), new Symbol("HAS"), new Symbol("ORCL"), new Symbol("FDX")};
 
-    	test(stocks, stocks);
-
-        /*
+    	int FUTURE_DAYS = 10;
+        int TRAIN_DAYS = 500;
+        int TEST_DAYS = 50;
+        int DAYS_BACK = TEST_DAYS + FUTURE_DAYS + 1;
+    	
+        
     	Symbol[] promiseTest = {new Symbol("F"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS")};
-        getPromisingStocks(promiseTest, DAYS_BACK + 1, FUTURE_DAYS, 0.3);
-        */
+        Symbol[] promisingStocks = getPromisingStocks(promiseTest, DAYS_BACK + 1 + FUTURE_DAYS, FUTURE_DAYS, 0.3);
+        Portfolio.simulateTrades(promisingStocks, 10000.0, DAYS_BACK + 1 + FUTURE_DAYS, FUTURE_DAYS);
     }
 
     private static void test(Symbol[] trainStocks, Symbol[] testStocks) throws IOException {
@@ -46,7 +49,7 @@ public class Test {
     }
     
     public static Symbol[] getPromisingStocks(Symbol[] symbols, int startDaysAgo, int futureDays, double diversity) throws IOException {   	
-    	GradientDescent gd = new GradientDescent(symbols, 30, startDaysAgo, futureDays);
+    	GradientDescent gd = new GradientDescent(symbols, 500, startDaysAgo, futureDays);
     	
     	double[] weights = gd.train(1.0, 1000000);
     
