@@ -15,7 +15,9 @@ public class Test {
     	// test(stocks, stocks);
     	
     	Symbol[] promiseTest = {new Symbol("F"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS")};
-        getPromisingStocks(promiseTest, DAYS_BACK + 1, FUTURE_DAYS, 0.3);
+    	Symbol[] promisingStocks = getPromisingStocks(promiseTest, DAYS_BACK + 1, FUTURE_DAYS, 0.3);
+    	
+    	Portfolio.simulateTrades(promisingStocks, 10000.0, DAYS_BACK + 1, FUTURE_DAYS);
     }
 
     private static void test(Symbol[] trainStocks, Symbol[] testStocks) throws IOException {
