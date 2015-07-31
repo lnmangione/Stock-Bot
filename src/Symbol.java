@@ -12,7 +12,7 @@ import yahoofinance.histquotes.Interval;
 
 public class Symbol extends Stock {
 	
-	private final int DAYS_HISTORY = 1000;
+	private final int DAYS_HISTORY = 2000;
 	
 	// Keep historical data that we have already pulled to speed up getHistory method
 	private List<HistoricalQuote> history = new ArrayList<>(0);
