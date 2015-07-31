@@ -18,12 +18,11 @@ public class Features {
     }
 
     public double[] getFeatures(Symbol stock, int daysAgo) throws IOException {
-        double[] features = new double[6];
+        double[] features = new double[5];
 
         features[0] = 1.0;
 
         features[1] = stock.getAdjClose(daysAgo).doubleValue();
-        features[2] = sp500.getAdjClose(daysAgo).doubleValue();
         
         features[features.length - 3] = stock.getMA(daysAgo, 50).doubleValue();
         features[features.length - 2] = stock.getMA(daysAgo, 200).doubleValue();
