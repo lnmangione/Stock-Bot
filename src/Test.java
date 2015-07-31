@@ -14,7 +14,7 @@ public class Test {
         int DAYS_BACK = TEST_DAYS + FUTURE_DAYS + 1;
     	
         
-    	Symbol[] promiseTest = {new Symbol("F"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS")};
+    	Symbol[] promiseTest = {new Symbol("F"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS"), new Symbol("AAL"), new Symbol("BAC"), new Symbol("BA"), new Symbol("CB"), new Symbol("FE"), new Symbol("ICE"), new Symbol("GPS")};
         Symbol[] promisingStocks = getPromisingStocks(promiseTest, DAYS_BACK + 1 + FUTURE_DAYS, FUTURE_DAYS, 0.3);
         Portfolio.simulateTrades(promisingStocks, 10000.0, DAYS_BACK + 1 + FUTURE_DAYS, FUTURE_DAYS);
     }
