@@ -21,7 +21,7 @@ public class Test {
     private static void test(Symbol[] trainStocks, Symbol[] testStocks) throws IOException {
     	
         int FUTURE_DAYS = 10;
-        int NUM_POINTS = 30;
+        int NUM_POINTS = 100;
         int DAYS_BACK = NUM_POINTS + FUTURE_DAYS + 1;
         
         GradientDescent gd = new GradientDescent(trainStocks, NUM_POINTS, DAYS_BACK, FUTURE_DAYS);
@@ -35,7 +35,7 @@ public class Test {
 
 
         // Train
-        double[] theta = gd.train(2.0, 10000000);
+        double[] theta = gd.train(1.0, 1000000);
 
         
         // Show predictions

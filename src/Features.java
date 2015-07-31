@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class Features {
     private static final int SPREAD = 10;
 
-    private static final int PAST_DAYS = 5;
+    private static final int PAST_DAYS = 3;
 
     private Symbol sp500;
     private HashMap<Integer, BigDecimal> market = new HashMap<Integer, BigDecimal>();
@@ -29,19 +29,13 @@ public class Features {
     }
 
     public double[] getFeatures(Symbol stock, int daysAgo) throws IOException {
-        double[] features = new double[PAST_DAYS + PAST_DAYS + 1 + 2];
+        double[] features = new double[5];
 
         features[0] = 1.0;
 
-        // Add past days as features
-        for (int i = 0; i < PAST_DAYS; i++) {
-            features[i + 1] = stock.getAdjClose((i * SPREAD) + daysAgo).doubleValue();
-        }
-
-        // Add SP500 past prices as features
-        for (int i = 0; i < PAST_DAYS; i++) {
-            features[i + PAST_DAYS + 1] = getSP500((i * SPREAD) + daysAgo);
-        }
+        features[1] = stock.getAdjClose(daysAgo).doubleValue();
+        
+        features[features.length - 3] = stock.getMA(daysAgo, 50).doubleValue() - stock.getMA(daysAgo, 200).doubleValue();
         
         features[features.length - 2] = stock.getMA(daysAgo, 50).doubleValue();
         features[features.length - 1] = stock.getMA(daysAgo, 200).doubleValue();

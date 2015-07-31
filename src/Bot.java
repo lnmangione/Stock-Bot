@@ -10,16 +10,14 @@ public class Bot {
 	static final String ds = "$";
 	
 	public static void main(String[] args) throws IOException {
-		Symbol stock = new Symbol("GOOG");
+		Symbol stock = new Symbol("ADBE");
 		
-		List<HistoricalQuote> history = stock.getHistory(10, 1000);
-		
-		for (HistoricalQuote quote : history) {
-			System.out.println(quote.getAdjClose());
-		}
+		stock.getMA(1, 500);
+
+		// System.out.println(stock.getHistory(1, 325).get(322).toString());
 	}
 	
-	private static Symbol[] getRandomStocks(int num) throws IOException {
+	public static Symbol[] getRandomStocks(int num) throws IOException {
 		String fileName = "stocks.txt";
 		String line = null;
 		FileReader fileReader;

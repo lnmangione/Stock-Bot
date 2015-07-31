@@ -12,9 +12,10 @@ import yahoofinance.histquotes.Interval;
 
 public class Symbol extends Stock {
 	
+	private final int DAYS_HISTORY = 1000;
+	
 	// Keep historical data that we have already pulled to speed up getHistory method
 	private List<HistoricalQuote> history = new ArrayList<>(0);
-	private int lastDay = -1;
 	
 	public Symbol(String symbol) throws IOException {
 		super(symbol);
@@ -22,6 +23,13 @@ public class Symbol extends Stock {
 		setQuote(stock.getQuote());
 		setStats(stock.getStats());
 		setDividend(stock.getDividend());
+		
+		// Set history
+		Calendar from = Calendar.getInstance();
+		from.add(Calendar.DAY_OF_MONTH, -DAYS_HISTORY);
+
+		// Update list of historical data with new historical data
+		history = getHistory(from, Interval.DAILY);
 	}
 	
 	/**
@@ -32,29 +40,10 @@ public class Symbol extends Stock {
 	 * @return list of historical quotes from time period
 	 * @throws IOException
 	 */
-	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {
-		
+	public List<HistoricalQuote> getHistory(int daysAgo, int days) throws IOException {		
 		// Create an integer to hold the farthest back day requested
 		int fromDay = daysAgo + days;
-		// Create an integer to hold what the new last day will be
-		int newDay = 2 * fromDay;
-		
-		// Only get more historical data if we don't have enough stored
-		if (lastDay < newDay) {
-			Calendar from = Calendar.getInstance();
-			Calendar to = Calendar.getInstance();
-			
-			// Grab history of more days than necessary. We'll filter out what we don't need later
-			from.add(Calendar.DAY_OF_MONTH, -newDay);
-			to.add(Calendar.DAY_OF_MONTH, -lastDay - 1);
 
-			// Update list of historical data with new historical data
-			history.addAll(getHistory(from, to, Interval.DAILY));
-			
-			// Update lastDay since we now have more information
-			lastDay = newDay;
-		}
-		
 		// Filter the list down to what we need
 		// Only subtract 1 from first parameter because it is inclusive
 		return history.subList(daysAgo, fromDay);
