@@ -6,11 +6,7 @@ import java.util.Arrays;
  */
 public class Test {	
     public static void main(String[] args) throws IOException {
-    	int FUTURE_DAYS = 10;
-        int NUM_POINTS = 30;
-        int DAYS_BACK = NUM_POINTS + FUTURE_DAYS + 1;
-    	
-    	Symbol[] stocks = {new Symbol("AAPL"), new Symbol("LVS")};
+    	Symbol[] stocks = {new Symbol("AAL"), new Symbol("T"), new Symbol("ADSK"), new Symbol("BAC"), new Symbol("BA"), new Symbol("KO"), new Symbol("EBAY"), new Symbol("XOM"), new Symbol("F"), new Symbol("GWW"), new Symbol("HAS"), new Symbol("ORCL"), new Symbol("FDX")};
     	
     	test(stocks, stocks);
 
@@ -21,27 +17,27 @@ public class Test {
     }
 
     private static void test(Symbol[] trainStocks, Symbol[] testStocks) throws IOException {
-    	
         int FUTURE_DAYS = 10;
-        int NUM_POINTS = 100;
-        int DAYS_BACK = NUM_POINTS + FUTURE_DAYS + 1;
+        int TRAIN_DAYS = 500;
+        int TEST_DAYS = 50;
+        int DAYS_BACK = TEST_DAYS + FUTURE_DAYS + 1;
         
-        GradientDescent gd = new GradientDescent(trainStocks, NUM_POINTS, DAYS_BACK, FUTURE_DAYS);
+        GradientDescent gd = new GradientDescent(trainStocks, TRAIN_DAYS, DAYS_BACK, FUTURE_DAYS);
 
         // Get test data
-        double[][] test = gd.getData(testStocks, NUM_POINTS, DAYS_BACK + NUM_POINTS);
-        double[] testActual = GradientDescent.getActual(testStocks, NUM_POINTS, DAYS_BACK + NUM_POINTS, FUTURE_DAYS);
+        double[][] test = gd.getData(testStocks, TEST_DAYS, TEST_DAYS + 1);
+        double[] testActual = GradientDescent.getActual(testStocks, TEST_DAYS, TEST_DAYS + 1, FUTURE_DAYS);
         
         // Normalize test data using training mean and standard deviation
         test = gd.normalize(test);
 
 
         // Train
-        double[] theta = gd.train(1.0, 1000000);
+        double[] theta = gd.train(2.0, 1000000);
 
         
         // Show predictions
-        System.out.println(Arrays.toString(theta));
+        Features.print(theta);
         System.out.println("Cost (Try to minimize): " + gd.getCost(theta));
 
         for (int i = 0; i < testActual.length; i++) {
