@@ -2,19 +2,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
-import yahoofinance.histquotes.HistoricalQuote;
 
 public class Bot {
 	static final String ds = "$";
 	
 	public static void main(String[] args) throws IOException {
-		Symbol stock = new Symbol("ADBE");
-		
-		stock.getMA(1, 500);
-
-		// System.out.println(stock.getHistory(1, 325).get(322).toString());
 	}
 	
 	public static Symbol[] getRandomStocks(int num) throws IOException {
