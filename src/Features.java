@@ -31,4 +31,12 @@ public class Features {
 
         return features;
     }
+
+    public static void print(double[] weights) {
+        System.out.println("Constant: " + weights[0]);
+        System.out.println("Today's Price: " + weights[1]);
+        System.out.println("50 Day MA: " + weights[2]);
+        System.out.println("200 Day MA: " + weights[3]);
+        System.out.println("SP500 50 Day MA: " + weights[4]);
+    }
 }
