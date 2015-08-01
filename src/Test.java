@@ -16,9 +16,20 @@ public class Test {
         int TEST_DAYS = 50;
         int DAYS_BACK = TEST_DAYS + FUTURE_DAYS + 1;
     	
-        
-    	Symbol[] promiseTest = {new Symbol("TSO"), new Symbol("F"), new Symbol("AAPL"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS"), new Symbol("AAL"), new Symbol("BAC"), new Symbol("BA"), new Symbol("CB"), new Symbol("FE"), new Symbol("ICE"), new Symbol("GPS")};
-        Symbol[] promisingStocks = getPromisingStocks(promiseTest, DAYS_BACK + 1 + FUTURE_DAYS, FUTURE_DAYS, 0.3);
+        /* The following stocks:
+         * ABBV, ADT
+         * 
+         * Receive the following error:
+         * 
+         * at java.util.ArrayList.subListRangeCheck(Unknown Source)
+		 * at java.util.ArrayList.subList(Unknown Source)
+		 * at Symbol.getHistory(Symbol.java:49)
+		 * at Symbol.getMA(Symbol.java:95)
+		 * at Features.getFeatures(Features.java:28)
+         * 
+         */
+    	Symbol[] promiseTest = {new Symbol("AAP"), new Symbol("ADBE"), new Symbol("ACE"),  new Symbol("ACN"), new Symbol("ABT"), new Symbol("MMM"), new Symbol("TSO"), new Symbol("F"), new Symbol("AAPL"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS"), new Symbol("AAL"), new Symbol("BAC"), new Symbol("BA"), new Symbol("CB"), new Symbol("FE"), new Symbol("ICE"), new Symbol("GPS")};
+        Symbol[] promisingStocks = getPromisingStocks(promiseTest, DAYS_BACK + 1 + FUTURE_DAYS, FUTURE_DAYS, 0.22);
         Portfolio.simulateTrades(promisingStocks, 10000.0, DAYS_BACK + 1 + FUTURE_DAYS, FUTURE_DAYS);
     }
 
