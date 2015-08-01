@@ -1,4 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -14,7 +17,7 @@ public class Test {
         int DAYS_BACK = TEST_DAYS + FUTURE_DAYS + 1;
     	
         
-    	Symbol[] promiseTest = {new Symbol("F"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS"), new Symbol("AAL"), new Symbol("BAC"), new Symbol("BA"), new Symbol("CB"), new Symbol("FE"), new Symbol("ICE"), new Symbol("GPS")};
+    	Symbol[] promiseTest = {new Symbol("TSO"), new Symbol("F"), new Symbol("AAPL"), new Symbol("APC"), new Symbol("CA"), new Symbol("C"), new Symbol("D"), new Symbol("GAS"), new Symbol("AAL"), new Symbol("BAC"), new Symbol("BA"), new Symbol("CB"), new Symbol("FE"), new Symbol("ICE"), new Symbol("GPS")};
         Symbol[] promisingStocks = getPromisingStocks(promiseTest, DAYS_BACK + 1 + FUTURE_DAYS, FUTURE_DAYS, 0.3);
         Portfolio.simulateTrades(promisingStocks, 10000.0, DAYS_BACK + 1 + FUTURE_DAYS, FUTURE_DAYS);
     }
@@ -97,5 +100,32 @@ public class Test {
 		}
 		
 		return promisingStocks;
+	}
+    
+    public static Symbol[] getRandomStocks(int num) throws IOException {
+		String fileName = "stocks.txt";
+		String line = null;
+		FileReader fileReader;
+		ArrayList<String> stocks = new ArrayList<String>();
+		Symbol[] randomStocks = new Symbol[num];
+
+		try { // Gets all stocks and adds them to ArrayList<String> stocks
+			fileReader = new FileReader(fileName);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				stocks.add(line);
+			}
+			bufferedReader.close();
+		} catch (Exception e) {}
+
+		int stocksSize = stocks.size();
+
+		//NOTE - This method may return duplicates
+		for (int f = 0; f < num; f++) { // Adds 30 random stocks to Symbol[]
+			// randomStocks
+			int random = (int) (Math.random() * (stocksSize));
+			randomStocks[f] = new Symbol(stocks.remove(random));
+		}
+		return randomStocks;
 	}
 }
