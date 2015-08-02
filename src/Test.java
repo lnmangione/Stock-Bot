@@ -39,26 +39,26 @@ public class Test {
         int TEST_DAYS = 50;
         int DAYS_BACK = TEST_DAYS + FUTURE_DAYS + 1;
         
-        GradientDescent gd = new GradientDescent(trainStocks, TRAIN_DAYS, DAYS_BACK, FUTURE_DAYS);
+        Algorithm alg = new GradientDescent(trainStocks, TRAIN_DAYS, DAYS_BACK, FUTURE_DAYS);
 
         // Get test data
-        double[][] test = gd.getData(testStocks, TEST_DAYS, TEST_DAYS + 1);
+        double[][] test = alg.getData(testStocks, TEST_DAYS, TEST_DAYS + 1);
         double[] testActual = GradientDescent.getActual(testStocks, TEST_DAYS, TEST_DAYS + 1, FUTURE_DAYS);
         
         // Normalize test data using training mean and standard deviation
-        test = gd.normalize(test);
+        test = alg.normalize(test);
 
 
         // Train
-        double[] theta = gd.train(2.0, 1000000);
+        double[] theta = alg.train(2.0, 1000000);
 
-        
+
         // Show predictions
         Features.print(theta);
 
         for (int i = 0; i < testActual.length; i++) {
             System.out.println("Actual: " + testActual[i]);
-			System.out.println("Prediction: " + gd.getPredictions(theta, test)[i]);
+			System.out.println("Prediction: " + alg.getPredictions(theta, test)[i]);
         }
     }
     

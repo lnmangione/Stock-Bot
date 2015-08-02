@@ -35,7 +35,7 @@ public class GradientDescent extends Algorithm {
 		return getPredictions(coef, data, actualMean, actualStdDev);
 	}
 	
-	public double getCost(double[] theta) {
+	private double getCost(double[] theta) {
         int size = trainActual.length;
 
         double[] predictions = getPredictions(theta, train, 0, 1);
